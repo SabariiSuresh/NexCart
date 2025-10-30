@@ -1,0 +1,157 @@
+<div *ngIf="order" class="min-h-screen flex items-center justify-center pt-3 p-4 pb-9">
+
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden p-6 md:p-12">
+
+
+        <h2 class="text-3xl sm:text-5xl font-bold text-center mb-12 text-gray-800 pb-5">
+            {{order.status === 'Delivered' ? 'Your order history' : 'Your order is confirmed.'}}
+        </h2>
+
+        <div class="flex flex-col gap-6 pt-5">
+            <div *ngFor="let item of order.orderItems"
+                class="flex justify-between items-center py-4 rounded-xl px-4 md:px-6 mb-4 bg-gray-50 shadow-inner">
+                <div class="flex gap-4 items-center">
+                    <img [src]="'http://localhost:3000' + item.product?.images[0]" alt="{{item.name}}"
+                        class="w-27 h-27 md:w-40 md:h-40 object-cover rounded-xl shadow-sm" />
+                    <div>
+                        <p class="font-semibold text-gray-800 text-xl sm:text-2xl pb-1">{{ item.name | titlecase}}</p>
+                        <p-rating *ngIf="item.rating != null" [(ngModel)]="item.rating" [readonly]="true" [stars]="5"
+                            class="text-yellow-400"></p-rating>
+                        <p *ngIf="item.rating == null" class="text-gray-400 text-sm">No rating for this product</p>
+
+                        <p class="text-gray-500 text-md pb-1">Quantity : {{ item.qty }}</p>
+                        <p class="font-bold text-slate-600 text-sm sm:text-xl">Price : <strong
+                                class="text-black text-md">{{
+                                item.price * item.qty| currency : 'INR'}} </strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-10 pt-5">
+            <h3 class="text-xl sm:text-3xl font-bold mb-4 text-slate-400 pb-4">Shipping Address</h3>
+            <div class="bg-gray-50 p-6 rounded-xl shadow-inner">
+                <div class="text-gray-700 space-y-1 md:space-y-2 text-xl">
+                    <p class="font-semibold">{{ order.shippingAddress.fullName | titlecase}}</p>
+                    <p>{{ order.shippingAddress.address | titlecase}}, {{ order.shippingAddress.city | titlecase}}, {{
+                        order.shippingAddress.state | titlecase}}</p>
+                    <p>{{ order.shippingAddress.country | titlecase}} - {{ order.shippingAddress.postalCode }}</p>
+                    <p>Phone : {{ order.shippingAddress.phoneNumber }} - {{ order.shippingAddress.alternateNumber }}</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="mb-10 pt-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div>
+                    <h3 class="text-xl sm:text-3xl font-bold mb-4 text-slate-400 pb-4">Order Summary</h3>
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-inner">
+                        <div class="space-y-2">
+
+                            <div class="flex justify-between pb-1">
+                                <p>Product Price</p>
+                                <span class="font-semibold">{{ order.itemPrice | currency: 'INR' }}</span>
+                            </div>
+
+                            <div class="flex justify-between pb-1">
+                                <span>Tax Price</span>
+                                <span class="font-semibold">
+                                    {{ isDiscountApplied ? 'Included in price' : ((order.taxPrice |
+                                    currency : 'INR' )) }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between pb-1">
+                                <p>Delivery Charge</p>
+                                <span class="font-semibold">
+                                    {{ order.deliveryPrice && order.deliveryPrice > 0 ? (order.deliveryPrice |
+                                    currency:'INR') : 'Free delivery' }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between pb-3">
+                                <p>Shipping Cost</p>
+                                <span class="font-semibold">
+                                    {{ order.shippingPrice && order.shippingPrice > 0 ? (order.shippingPrice |
+                                    currency:'INR') : 'Free shipping' }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between items-center pt-3 border-t border-gray-200 mt-3">
+                                <p class="font-bold text-xl text-slate-500">Total</p>
+                                <strong class="text-black text-2xl">{{ order.totalPrice | currency: 'INR' }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl sm:text-3xl font-bold mb-4 text-slate-400 pb-4">Payment Method</h3>
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-inner">
+                        <p class="text-gray-800 text-xl font-bold">{{ order.paymentMethod | titlecase}}</p>
+                    </div>
+                    <h3 class="text-xl sm:text-3xl font-bold mb-4 text-slate-400 pb-4 pt-2">Payment Status</h3>
+                    <div class="bg-gray-50 p-6 text-xl rounded-xl shadow-inner font-bold">
+                        <span [ngClass]="{
+    'text-green-500 px-3 py-1 rounded-full': order.isPaid,
+    'text-red-500 px-3 py-1': !order.isPaid
+  }">
+                            {{order.isPaid
+                            ? 'Paid'
+                            : order.status === 'Payment Failed'
+                            ? 'Failed'
+                            : 'Pending'
+                            }}
+
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mb-10">
+
+            <div class="flex items-center justify-between mb-6 pb-5 pt-5">
+                <h3 class="text-2xl sm:text-4xl font-bold text-slate-500 text-center flex-1">
+                    Track Your Order
+                </h3>
+
+                <p-button *ngIf="order?.status === 'Pending'" severity="danger" variant="outlined"
+                    pTooltip="Cancel Order" icon="pi pi-times" (click)="cancelOrder($event)">
+                </p-button>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl shadow-inner p-4 overflow-x-auto">
+                <mat-vertical-stepper [selectedIndex]="activeStep" linear="false">
+                    <mat-step *ngFor="let step of steps; let i = index" [completed]="i < activeStep">
+                        <ng-template matStepLabel>
+                            <div class="flex items-center gap-3">
+                                <span class="w-7 h-7 flex items-center justify-center rounded-full text-white"
+                                    [ngClass]="{
+                        'bg-yellow-300': step.label === 'Pending' && i <= activeStep,
+                        'bg-blue-500': step.label === 'Shipped' && i <= activeStep,
+                        'bg-green-500': step.label === 'Delivered' && i <= activeStep,
+                        'bg-red-500': step.label === 'Cancelled' && i <= activeStep,
+                        'bg-gray-300': i > activeStep
+                      }">
+                                    <i [ngClass]="getIcon(step.label)"></i>
+                                </span>
+                                <span class="font-semibold text-gray-800 text-sm sm:text-base">{{ step.label }}</span>
+                            </div>
+                        </ng-template>
+                        <div class="mt-3 ml-10 p-2 w-full text-center rounded-lg  bg-gradient-to-r from-gray-50 via-blue-200 to-green-2000 text-gray-800 font-semibold shadow-inner"
+                            *ngIf="i <= activeStep">
+                            {{ step.description }}
+                        </div>
+                    </mat-step>
+                </mat-vertical-stepper>
+            </div>
+
+            <p-confirmpopup></p-confirmpopup>
+        </div>
+
+    </div>
+</div>

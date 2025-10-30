@@ -1,0 +1,100 @@
+<div *ngIf="order" class="p-6 bg-white rounded-xl shadow-lg">
+
+    <h2 class="text-2xl pb-3 font-bold text-gray-700 mb-3">Order Information</h2>
+
+    <div class="mb-6 bg-gray-50 p-6 rounded-xl shadow-inner">
+        <p class="text-gray-600 text-md pb-2"><strong>Order ID :</strong> {{ order._id }}</p>
+        <p class="text-gray-600 text-md pb-2"><strong>Placed On :</strong> {{ order.createdAt | date:'medium' }}</p>
+    </div>
+
+    <div class="mb-10">
+        <h2 class="text-2xl pt-2 pb-2 font-bold text-gray-700 mb-3">Product</h2>
+
+        <div class="mb-6 bg-gray-50 p-6 rounded-xl shadow-inner">
+            <ul class="space-y-3">
+                <li *ngFor="let item of order.orderItems" class="flex justify-between items-center p-3 rounded-lg ">
+                    <span class="text-gray-700 text-xl">
+                        <strong>{{ item.name }}</strong> <strong>{{ item.qty }}</strong>
+                    </span>
+                    <span class="font-bold text-slate-500 text-2xl">{{ item.price * item.qty | currency : 'INR'}}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="mb-10 pt-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div>
+                <h3 class="text-2xl font-bold mb-4 text-gray-700 pb-4">Order Summary</h3>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-inner">
+                    <div class="space-y-2">
+                        <p>Product Price : <span class="font-semibold">{{ order.itemPrice | currency : 'INR'}}</span>
+                        </p>
+                        <p>Tax Amount : <span class="font-semibold">{{ order.taxPrice | currency : 'INR'}}</span></p>
+                        <p>Delivery Charge : <span class="font-semibold">{{ order.deliveryPrice | currency :
+                                'INR'}}</span></p>
+                        <p>Shipping Cost : <span class="font-semibold">{{ order.shippingPrice | currency :
+                                'INR'}}</span></p>
+                        <p class="font-bold text-xl text-slate-500 pt-3">Total : <strong class="text-black text-2xl">{{
+                                order.totalPrice | currency : 'INR'}}</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-2xl font-bold mb-4 text-gray-700 pb-4">Payment Method</h3>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-inner">
+                    <p class="text-gray-800 font-semibold text-xl">{{ order.paymentMethod | titlecase}}</p>
+                </div>
+                <h3 class="text-2xl font-bold mb-4 text-gray-700 pb-4 pt-2">Payment Status</h3>
+                <div class="bg-gray-50 p-4 rounded-xl shadow-inner">
+                    <p class="font-semibold text-xl">
+                        <span [ngClass]="{
+    'text-green-500 px-3 py-1 rounded-full': order.isPaid,
+    'text-red-500 px-3 py-1': !order.isPaid
+  }">
+                            {{order.isPaid
+                            ? 'Paid'
+                            : order.status === 'Payment Failed'
+                            ? 'Failed'
+                            : 'Pending'
+                            }}
+                        </span>
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="mb-10">
+        <h3 class="text-4xl font-bold text-gray-700 text-center mb-6 pb-5 pt-5">Track Your Order</h3>
+        <mat-vertical-stepper [selectedIndex]="getActiveStep(order.status)" linear="false"
+            class="bg-white rounded-xl p-4 shadow-lg">
+            <mat-step *ngFor="let step of steps; let i = index" [completed]="i < getActiveStep(order.status)"
+                [optional]="false">
+                <ng-template matStepLabel>
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 flex items-center justify-center rounded-full text-white" [ngClass]="{
+                  'bg-yellow-300': step.label === 'Pending' && i <= getActiveStep(order.status),
+                  'bg-blue-500': step.label === 'Shipped' && i <= getActiveStep(order.status),
+                  'bg-green-500': step.label === 'Delivered' && i <= getActiveStep(order.status),
+                  'bg-red-500': step.label === 'Cancelled' && i <= getActiveStep(order.status),
+                  'bg-gray-300': i > getActiveStep(order.status)
+                }">
+                            <i [ngClass]="getIcon(step.label)"></i>
+                        </span>
+                        <span class="font-semibold text-gray-800">{{ step.label }}</span>
+                    </div>
+                </ng-template>
+
+                <div class="mt-3 ml-12 p-3 w-100 text-center rounded-lg bg-gray-100 text-gray-800 font-semibold"
+                    *ngIf="i <= getActiveStep(order.status)">
+                    {{ step.description }}
+                </div>
+            </mat-step>
+        </mat-vertical-stepper>
+
+    </div>

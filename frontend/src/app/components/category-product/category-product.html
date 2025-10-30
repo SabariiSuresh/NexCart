@@ -1,0 +1,61 @@
+<div class="p-6 min-h-screen flex flex-col md:flex-row gap-6">
+
+  <app-filters *ngIf="categoryName.length > 0" (filtersChanged)="applyFilters()"></app-filters>
+
+  <div class="flex-1">
+
+    <div *ngIf="paginatedProducts.length === 0" class="text-center py-10 text-gray-500 text-2xl  font-medium">
+      No products match the selected filters
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let product of paginatedProducts"
+        class=" rounded-xl shadow-inner overflow-hidden flex flex-col justify-between rounded-t-2xl cursor-pointer">
+
+        <div
+          class="relative group w-full sm:h-60 md:h-72 lg:h-70 aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-t-xl">
+          <img [src]="'http://localhost:3000' + product.images[0]" alt="{{ product.name }}"
+            class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105" />
+          <span *ngIf="product.discount > 0"
+            class="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+            -{{ product.discount }}%
+          </span>
+          <div *ngIf="product.stock <= 0"
+            class="absolute top-4 left-4 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-md shadow-md animate-pulse z-10">
+            OUT OF STOCK
+          </div>
+        </div>
+
+        <div class="p-4 flex flex-col gap-2">
+          <h3 class="font-semibold text-lg text-gray-800 truncate">{{ product.name | titlecase}}</h3>
+          <p-rating [ngModel]="product.rating || 0" [readonly]="true" [stars]="5"
+            styleClass="text-yellow-500"></p-rating>
+          <div class="flex justify-start items-baseline gap-2 sm:gap-3">
+            <p class="text-lg sm:text-xl font-bold text-green-600">
+              {{ product.price | currency : 'INR' }}
+            </p>
+            <p *ngIf="product.oldPrice" class="text-gray-400 line-through text-sm sm:text-base">
+              {{ product.oldPrice | currency : 'INR' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex justify-center gap-3 p-5 pt-3">
+          <p-button label="View Product" icon="pi pi-info-circle" [raised]="true" severity="info"
+            (onClick)="viewProduct(product._id)" [size]="'small'" />
+          <p-button label="Buy Now" icon="pi pi-bolt" [size]="'small'" [raised]="true" [disabled]="product.stock <= 0"
+            (onClick)="buyNow(product)" />
+        </div>
+
+      </div>
+    </div>
+
+
+    <div *ngIf="filteredProducts.length > pageSize" class="card flex justify-center pb-3 pt-10">
+      <p-paginator [rows]="pageSize" [totalRecords]="filteredProducts.length" [rowsPerPageOptions]="[9 , 12]"
+        (onPageChange)="onPageChange($event)">
+      </p-paginator>
+    </div>
+
+  </div>
+</div>

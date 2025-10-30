@@ -1,0 +1,84 @@
+<div class="p-6 bg-gray-100 min-h-screen">
+
+  <h2 class="text-3xl font-extrabold mb-8 text-gray-800 pb-6">Admin Dashboard</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 pb-10">
+
+    <div class="bg-white rounded-xl shadow hover:shadow-xl flex flex-col items-center hover:scale-105 transition transform">
+      <div class="bg-gradient-to-r from-green-100 to-green-50 w-full p-4 rounded-t-xl flex justify-center">
+        <i class="pi pi-wallet text-green-500 text-2xl"></i>
+      </div>
+      <p class="font-bold text-gray-500 mt-4 mb-2">Total Revenue</p>
+      <p class="text-green-500 text-3xl md:text-3xl font-bold">{{ totalRevenue | currency:'INR' }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow hover:shadow-xl flex flex-col items-center hover:scale-105 transition transform">
+      <div class="bg-gradient-to-r from-yellow-100 to-yellow-50 w-full p-4 rounded-t-xl flex justify-center">
+        <i class="pi pi-users text-yellow-500 text-2xl"></i>
+      </div>
+      <p class="font-bold text-gray-500 mt-4 mb-2">Total Users</p>
+      <p class="text-yellow-500 text-3xl md:text-3xl font-bold">{{ totalUsers }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow hover:shadow-xl flex flex-col items-center hover:scale-105 transition transform">
+      <div class="bg-gradient-to-r from-red-100 to-red-50 w-full p-4 rounded-t-xl flex justify-center">
+        <i class="pi pi-money-bill text-red-500 text-2xl"></i>
+      </div>
+      <p class="font-bold text-gray-500 mt-4 mb-2">Paid Orders</p>
+      <p class="text-red-500 text-3xl md:text-3xl font-bold">{{ paidOrders }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow hover:shadow-xl flex flex-col items-center hover:scale-105 transition transform">
+      <div class="bg-gradient-to-r from-blue-100 to-blue-50 w-full p-4 rounded-t-xl flex justify-center">
+        <i class="pi pi-shopping-cart text-blue-500 text-2xl"></i>
+      </div>
+      <p class="font-bold text-gray-500 mt-4 mb-2">Total Orders</p>
+      <p class="text-blue-500 text-3xl md:text-3xl font-bold pb-3">{{ allOrders }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow hover:shadow-xl flex flex-col items-center hover:scale-105 transition transform">
+      <div class="bg-gradient-to-r from-purple-100 to-purple-50 w-full p-4 rounded-t-xl flex justify-center">
+        <i class="pi pi-box text-purple-500 text-2xl"></i>
+      </div>
+      <p class="font-bold text-gray-500 mt-4 mb-2">Total Products</p>
+      <p class="text-purple-500 text-3xl md:text-3xl font-bold">{{ totalProducts }}</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow hover:shadow-xl flex flex-col items-center hover:scale-105 transition transform">
+      <div class="bg-gradient-to-r from-teal-100 to-teal-50 w-full p-4 rounded-t-xl flex justify-center">
+        <i class="pi pi-chart-line text-teal-500 text-2xl"></i>
+      </div>
+      <p class="font-bold text-gray-500 mt-4 mb-2">Avg. Order Value</p>
+      <p class="text-teal-500 text-3xl md:text-3xl font-bold">{{ averageOrderValue | currency:'INR' }}</p>
+    </div>
+
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+    <div class="bg-white rounded-xl shadow p-6">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">Revenue (Last 7 Days)</h3>
+      <p-chart type="bar" [data]="revenueChartData" [options]="revenueChartOptions" class="w-full"></p-chart>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">Top Selling Products</h3>
+      <div class="flex justify-center">
+        <p-chart type="polarArea" [data]="topProductsChartData" [options]="topProductsChartOptions"
+          class="w-full md:w-80"></p-chart>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">Orders Trend</h3>
+      <p-chart type="line" [data]="ordersChartData" [options]="ordersChartOptions" class="w-full"></p-chart>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">Low Stock Products</h3>
+      <p-chart type="bar" [data]="lowStockChartData" [options]="lowStockChartOptions" class="w-full"></p-chart>
+    </div>
+
+  </div>
+
+</div>

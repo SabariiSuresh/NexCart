@@ -1,0 +1,96 @@
+<div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
+  <div class="flex items-center gap-2">
+    <span class="font-semibold text-xl text-slate-400">
+      Pay Now : <span class="text-2xl text-black font-semibold">{{ config.data.amount | currency : 'INR'}}</span>
+    </span>
+  </div>
+  <i class="pi pi-times cursor-pointer text-gray-500 hover:text-red-500 transition" pTooltip="Cancell Payment"
+    tooltipPosition="top" (click)="cancelPayment()"></i>
+</div>
+
+<div [formGroup]="paymentForm" class="p-6 space-y-6 bg-white rounded-b-xl">
+
+  <div class="grid grid-cols-2 gap-3 pb-6">
+    <button *ngFor="let method of paymentMethods" class="p-3 rounded-xl border flex flex-col items-center justify-center gap-2 text-sm font-medium transition-all
+             hover:border-blue-600 hover:bg-blue-50"
+      [ngClass]="{'border-blue-600 bg-blue-50 text-blue-800 shadow': paymentForm.value.method === method}"
+      (click)="paymentForm.patchValue({method}); onPaymentChange()">
+
+
+      <ng-container [ngSwitch]="method">
+        <i *ngSwitchCase="'Upi'" class="pi pi-qrcode text-xl"></i>
+        <i *ngSwitchCase="'Card'" class="pi pi-credit-card text-xl"></i>
+        <i *ngSwitchCase="'NetBanking'" class="pi pi-building text-xl"></i>
+        <i *ngSwitchCase="'COD'" class="pi pi-wallet text-xl"></i>
+      </ng-container>
+
+      <span>{{ method }}</span>
+    </button>
+  </div>
+
+  <div *ngIf="paymentForm.value.method==='Upi'" class="space-y-3 pb-1">
+    <input pInputText placeholder="Enter UPI ID" formControlName="upiId"
+      class="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+  </div>
+
+
+  <div *ngIf="paymentForm.value.method==='Card'" class="space-y-4">
+
+    <p-floatlabel variant="on">
+      <input pInputText id="Card Number" type="number" formControlName="cardNumber" autocomplete="off" class="w-full" />
+      <label for="Card Number">Card Number</label>
+    </p-floatlabel>
+
+    <div class="pt-5 pb-2">
+      <p-floatlabel variant="on">
+        <input pInputText id="cardName" formControlName="cardName" autocomplete="off" class="w-full" />
+        <label for="Name on Card">Name on Card</label>
+      </p-floatlabel>
+    </div>
+
+    <div class="flex gap-4 pt-4 pb-2">
+      <p-floatlabel variant="on" class="flex-1">
+        <p-datepicker formControlName="expiry" id="expiry" view="month" dateFormat="mm/yy" [readonlyInput]="true"
+          class="w-full" />
+        <label for="Expiry">Expiry</label>
+      </p-floatlabel>
+
+      <p-floatlabel variant="on" class="flex-1">
+        <input pInputText id="cvv" formControlName="cvv" autocomplete="off" class="w-full" />
+        <label for="Cvv">CVV</label>
+      </p-floatlabel>
+    </div>
+
+  </div>
+
+
+  <div *ngIf="paymentForm.value.method==='Netbanking'" class="space-y-4">
+
+    <p-floatlabel variant="on">
+      <input pInputText id="bankName" formControlName="bankName" autocomplete="off" class="w-full" />
+      <label for="Bank Name">Bank Name</label>
+    </p-floatlabel>
+
+    <div class="pt-4">
+      <p-floatlabel variant="on">
+        <input pInputText id="transactionId" type="number" formControlName="transactionId" autocomplete="off"
+          class="w-full" />
+        <label for="Transaction ID">Transaction ID</label>
+      </p-floatlabel>
+    </div>
+
+  </div>
+
+  <div *ngIf="paymentForm.value.method==='COD'" class="text-red-400 text-center text-sm mt-2 italic pt-4 pb-1">
+    *Cash on Delivery will be collected at delivery.
+  </div>
+
+  <div class="justify-center pt-5">
+    <p-button label="Proceed To Pay" [style]="{ width : '100%' }" [raised]="true" icon="pi pi-spin pi-spinner"
+      (click)="confirmPayment()" [disabled]="processing" />
+  </div>
+
+  <i *ngIf="processing" pButtonIcon="pi pi-spin pi-spinner"></i>
+
+
+</div>

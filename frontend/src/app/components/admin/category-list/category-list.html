@@ -1,0 +1,63 @@
+<div class="p-4 bg-gray-100 min-h-screen text-gray-200">
+
+  <div class="flex justify-center items-center mb-4 pt-5 pb-8 gap-4">
+
+    <p-button label="Add Category" icon="pi pi-check-circle" severity="success" variant="text"
+      (onClick)="openForm()"></p-button>
+
+    <p-autoComplete [(ngModel)]="searchKeyword" [suggestions]="filteredSuggestions"
+      (completeMethod)="searchSuggestions($event)" (onSelect)="filterCategories()" placeholder="Search products..."
+      field="name" [dropdown]="true" [inputStyle]="{'width':'500px'}">
+      <ng-template let-product pTemplate="item">
+        {{ product.name }}
+      </ng-template>
+    </p-autoComplete>
+
+  </div>
+
+  <div class="flex justify-center p-4">
+    <p-treeTable [value]="categoryTree"
+      tableStyleClass=" max-w-full bg-gradient-to-b from-white to-slate-300 rounded-xl shadow-lg"
+      [tableStyle]="{ 'min-width':'50rem' }">
+
+      <ng-template pTemplate="header">
+        <tr class="bg-gray-700 text-white text-center">
+          <th>Category Name</th>
+          <th>Description</th>
+          <th style="text-align:center;">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+        <tr>
+          <td>
+            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+            {{ rowData.name | titlecase }}
+          </td>
+          <td>
+            {{ rowData.description | titlecase }}
+          </td>
+          <td class="flex gap-3 justify-center">
+            <p-button  icon="pi pi-pencil"  severity="info" variant="text" pTooltip="Edit" tooltipPosition="left"
+              (click)="editCategory(rowData)"/>
+                <p-button  icon="pi pi-trash"  severity="danger" variant="text" pTooltip="Delete" tooltipPosition="right"
+              (click)="deleteCategory($event , rowData._id)"/>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-treeTable>
+  </div>
+
+
+
+  <p-dialog header="{{ formTitle }}" [(visible)]="displayForm" [modal]="true" [closable]="true"
+    [style]="{width: '400px'}">
+    <app-category-form [category]="selectedCategory" (formSaved)="onFormSaved($event)"></app-category-form>
+  </p-dialog>
+
+  <div>
+    <p-confirmpopup/>
+  </div>
+
+</div>

@@ -1,0 +1,132 @@
+<nav
+    class="bg-gradient-to-t from-teal-500 via-teal-100 to-white shadow-md px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-50">
+
+    <div class="text-3xl md:text-4xl font-serif text-neutral-700 hover:text-neutral-900 transition-transform hover:scale-105 duration-300 font-bold cursor-pointer pr-3 flex items-center gap-2"
+        (click)="home()">
+        <i class="pi pi-shopping-bag !text-2xl"></i>
+        NexCart
+    </div>
+
+
+    <div class="flex flex-1 mx-2 md:mx-6 max-w-2xl pr-3">
+        <p-inputGroup class="w-full">
+            <p-autoComplete [(ngModel)]="searchKeyword" [suggestions]="filteredSuggestions"
+                (completeMethod)="searchSuggestions($event)" (onSelect)="selectSuggestion($event)"
+                [forceSelection]="false" [minLength]="2" field="name" (keyup.enter)="onSearch()"
+                placeholder="Search for Products, Brands and More..."
+                class="flex-1 !border-none focus:!ring-0 focus:!outline-none">
+                <ng-template let-product pTemplate="item">
+                    <div class="flex items-center gap-3 p-2 hover:bg-gray-100 rounded">
+                        <img [src]="'http://localhost:3000'+ product.images[0]" alt="{{product.name | titlecase}}"
+                            class="w-10 h-10 object-cover rounded" />
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium">{{ product.name | titlecase}}</span>
+                            <small class="text-xs text-gray-500">{{ product.category?.name || '' | titlecase}}</small>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-autoComplete>
+            <p-button icon="pi pi-search" (onClick)="onSearch()" severity="contrast"></p-button>
+        </p-inputGroup>
+    </div>
+
+    <button class="md:hidden text-gray-600 text-2xl focus:outline-none" (click)="mobileMenuVisible = true">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <div class="hidden md:flex items-center gap-3.5">
+        <p-button *ngIf="!isLoggedIn" icon="pi pi-user text-gray-500" label="Login" variant="text" severity="contrast"
+            (onClick)="authPopup.showDialog = true" />
+
+        <ng-container *ngIf="isLoggedIn && userRole !== 'admin'">
+            <p-menu #userMenu [popup]="true" [model]="userMenuItems"></p-menu>
+            <div class="flex items-center gap-2 cursor-pointer" (click)="userMenu.toggle($event)">
+                <i class="pi pi-user text-lg"></i>
+                <span class="font-semibold">{{ userName }}</span>
+                <i class="pi pi-chevron-down ml-1 text-gray-400"></i>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="isLoggedIn && userRole === 'admin'">
+            <p-menu #adminMenu [popup]="true" [model]="adminMenuItems"></p-menu>
+            <div class="flex items-center gap-2 cursor-pointer" (click)="adminMenu.toggle($event)">
+                <i class="pi pi-user text-lg"></i>
+                <span class="font-semibold">{{userName}}</span>
+                <i class="pi pi-chevron-down ml-1 text-gray-400"></i>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="userRole !== 'admin'">
+            <p-button label="Cart" icon="pi pi-shopping-cart" variant="text" severity="contrast"
+                (onClick)="cartView()" />
+            <p-button label="Wishlist" icon="pi pi-heart text-red-500" variant="text" severity="contrast"
+                (onClick)="wishlistView()" />
+        </ng-container>
+
+        <app-auth #authPopup></app-auth>
+    </div>
+
+</nav>
+
+<p-drawer [(visible)]="mobileMenuVisible" position="right" [showCloseIcon]="false">
+
+    <div class="flex justify-between items-center p-4 border-b border-gray-200">
+        <span class="text-4xl font-serif font-bold cursor-pointer" (click)="home()">EShopy</span>
+        <p-button icon="pi pi-times" severity="info" [rounded]="true" [outlined]="true" pTooltip="Close"
+            tooltipPosition="top" (click)="closeDrawer()"></p-button>
+    </div>
+
+    <hr class="my-2 border-gray-200">
+
+    <div class="flex flex-col gap-3 p-4">
+
+        <ng-container *ngIf="!isLoggedIn">
+            <p-button label="Login / Signup" icon="pi pi-user" severity="danger"
+                class="w-full  flex justify-center pt-4" [size]="'large'" [outlined]="true"
+                (onClick)="authPopup.showDialog=true; closeDrawer()"></p-button>
+        </ng-container>
+
+        <ng-container *ngIf="isLoggedIn && userRole !== 'admin'">
+
+            <p-button label="Profile" icon="pi pi-user" severity="secondary" variant="text"
+                (onClick)="profile(); closeDrawer()" class="w-full text-left"></p-button>
+
+            <p-button label="Cart" icon="pi pi-shopping-cart" severity="secondary" variant="text"
+                (onClick)="cartView(); closeDrawer()" class="w-full text-left"></p-button>
+
+            <p-button label="Wishlist" icon="pi pi-heart" severity="secondary" variant="text"
+                (onClick)="wishlistView(); closeDrawer()" class="w-full text-left"></p-button>
+
+            <p-button label="Orders" icon="pi pi-shopping-bag" severity="secondary" variant="text"
+                (onClick)="myOrder(); closeDrawer()" class="w-full text-left"></p-button>
+
+            <p-button label="Payments" icon="pi pi-wallet" severity="secondary" variant="text"
+                (onClick)="myPayments(); closeDrawer()" class="w-full text-left"></p-button>
+
+            <p-button label="Logout" icon="pi pi-power-off" severity="danger" variant="text"
+                (onClick)="logOut(); closeDrawer()" class="w-full text-left"></p-button>
+
+        </ng-container>
+
+        <ng-container *ngIf="isLoggedIn && userRole === 'admin'">
+            <p-button label="Dashboard" icon="pi pi-home" class="w-full text-left" severity="secondary" variant="text"
+                (onClick)="navigate('dashboard'); closeDrawer()"></p-button>
+            <p-button label="Products" icon="pi pi-box" class="w-full text-left" severity="secondary" variant="text"
+                (onClick)="navigate('products'); closeDrawer()"></p-button>
+            <p-button label="Category" icon="pi pi-tags" class="w-full text-left" severity="secondary" variant="text"
+                (onClick)="navigate('category'); closeDrawer()"></p-button>
+            <p-button label="Orders" icon="pi pi-shopping-bag" class="w-full text-left" severity="secondary"
+                variant="text" (onClick)="navigate('orders'); closeDrawer()"></p-button>
+            <p-button label="Payments" icon="pi pi-credit-card" class="w-full text-left" severity="secondary"
+                variant="text" (onClick)="navigate('payments'); closeDrawer()"></p-button>
+            <p-button label="Profile" icon="pi pi-user" class="w-full text-left" severity="secondary" variant="text"
+                (onClick)="profile(); closeDrawer()"></p-button>
+            <p-button label="Logout" icon="pi pi-power-off" class="w-full text-left" severity="danger" variant="text"
+                (onClick)="logOut(); closeDrawer()"></p-button>
+        </ng-container>
+
+    </div>
+</p-drawer>
+
+
+<p-scrolltop />

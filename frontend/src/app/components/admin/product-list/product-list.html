@@ -1,0 +1,71 @@
+<div class="p-4 bg-gray-100 min-h-screen text-black">
+
+  <div class="flex justify-center items-center mb-4 pb-8 pt-4 gap-4">
+
+
+    <p-button label="Add Product" icon="pi pi-check-circle" severity="success" variant="text"
+      (onClick)="openForm()"></p-button>
+
+    <p-autoComplete [(ngModel)]="searchKeyword" [suggestions]="filteredSuggestions"
+      (completeMethod)="searchSuggestions($event)" (onSelect)="filterProducts()" placeholder="Search products..."
+      field="name" [dropdown]="true" [inputStyle]="{'width':'500px'}">
+      <ng-template let-product pTemplate="item">
+        {{ product.name }}
+      </ng-template>
+    </p-autoComplete>
+
+    <p-treeSelect [options]="categoryTree" placeholder="Filter by Category" [(ngModel)]="selectedCategory"
+      selectionMode="single" class="max-w-lg w-64" (onNodeSelect)="filterByCategory()">
+    </p-treeSelect>
+
+  </div>
+
+  <p-table [value]="filteredProducts" [paginator]="true" showGridlines selectionMode="single"
+    [rowsPerPageOptions]="[5, 10, 20]" [rows]="10" [responsiveLayout]="'scroll'" class="bg-gray-800 rounded-lg">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Brand</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+      <tr>
+        <td>{{ product.name | titlecase}}</td>
+        <td>{{ product.category?.name | titlecase}}</td>
+        <td>{{ product.brand | titlecase}}</td>
+        <td>{{ product.price | currency:'INR' }}</td>
+        <td>
+          <span [ngClass]="{ 'text-red-500 font-semibold': product.stock <= 5 }">
+            {{ product.stock <= 5 ? 'Low Stock' : product.stock }} </span>
+        </td>
+        <td>
+          <span class="flex justify-between gap-5">
+            <p-button icon="pi pi-pencil" pTooltip="Edit" tooltipPosition="left" severity="info" variant="text"
+              (onClick)="editProduct(product)" />
+            <p-button icon="pi pi-trash" pTooltip="Delete" severity="danger" variant="text"
+              (onClick)="deleteProduct($event , product._id)" />
+          </span>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5" class="text-center">No products found</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+
+  <p-dialog header="{{ formTitle }}" [(visible)]="displayForm" [modal]="true" [closable]="true"
+    [style]="{ width: '90vw', maxWidth: '1000px' }" [breakpoints]="{'960px':'90vw','640px':'95vw'}">
+    <app-product-form [product]="selectedProduct" (formSaved)="onFormSaved($event)"></app-product-form>
+  </p-dialog>
+
+  <p-confirmpopup />
+
+</div>

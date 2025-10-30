@@ -1,0 +1,30 @@
+:host ::ng-deep .p-button {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  transition: all 0.3s ease-in-out;
+}
+
+:host ::ng-deep .p-button:hover {
+  transform: scale(1.03);
+}
+
+:host ::ng-deep .spec-row:hover {
+  background-color: #f9fafb;
+  transition: background-color 0.2s ease-in-out;
+}
+
+:host ::ng-deep .p-galleria {
+  width: 550px !important;
+  height: 500px !important;
+  max-width: 750px !important;
+  max-height: 550px !important;
+}
+:host ::ng-deep .p-card{
+    width: 700vh;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+}
+

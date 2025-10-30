@@ -1,0 +1,54 @@
+
+<div class="p-6 min-h-screen flex flex-col md:flex-row gap-6">
+
+  <app-filters *ngIf="wishlists.length > 0" (filtersChanged)="applyFilters()"></app-filters>
+
+  <div class="flex-1">
+
+    <h2 *ngIf="wishlists.length" class="text-2xl font-bold mb-6 pb-2">
+      My Wishlist ({{wishlists.length}})
+    </h2>
+
+    <div *ngIf="wishlists.length === 0" class="text-gray-500 text-3xl  text-center py-10 font-semibold">
+      Your wishlist is empty.
+    </div>
+
+
+      <div *ngFor="let item of wishlists" class="relative flex flex-col sm:flex-row items-center gap-4 p-4 cursor-pointer border-b border-t hover:bg-gray-50 transition"
+        (click)="moveToCart(item.product._id)">
+
+        <div class="absolute top-2 right-2">
+          <p-button icon="pi pi-trash text-red-400" severity="contrast" variant="text" pTooltip="Remove"
+            tooltipPosition="top" (onClick)="remove($event, item.product._id)" />
+        </div>
+
+       <div class="w-28 h-28 sm:w-32 sm:h-32 flex justify-center items-center border rounded-md bg-white">
+        <img [src]="'http://localhost:3000' + item.product.images[0]" alt="{{ item.product.name }}"
+          class="max-w-full max-h-full object-contain" />
+      </div>
+
+        <div class="flex-1 flex flex-col gap-1">
+          <h2 class="text-xl font-bold text-gray-800 truncate pb-1"><span class="font-bold text-2xl text-orange-400">{{item.product.brand | titlecase}}</span> {{ item.product.name | titlecase}}</h2>
+
+          <div class="flex items-baseline gap-2 mt-1">
+            <p class="text-lg font-bold text-gray-800">{{ item.product.price | currency : 'INR'}}</p>
+            <p *ngIf="item.product.oldPrice" class="text-gray-400 line-through text-sm">
+              ₹{{ item.product.oldPrice }}
+            </p>
+            <span *ngIf="item.product.oldPrice" class="text-sm text-green-600 font-semibold">
+              {{ (((item.product.oldPrice - item.product.price) / item.product.oldPrice) * 100) | number:'1.0-0' }}% OFF
+            </span>
+          </div>
+        </div>
+      </div>
+
+    <div *ngIf="filteredProducts.length > pageSize" class="flex justify-center mt-6">
+      <p-paginator [rows]="pageSize" [totalRecords]="filteredProducts.length" [rowsPerPageOptions]="[4, 8, 12]"
+        [first]="currentPage * pageSize" (onPageChange)="onPageChange($event)">
+      </p-paginator>
+    </div>
+
+  </div>
+ <p-confirmpopup />
+</div>
+

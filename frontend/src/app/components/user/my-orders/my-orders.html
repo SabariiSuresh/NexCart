@@ -1,0 +1,62 @@
+<div class=" min-h-screen  px-4 sm:px-6 lg:px-12 py-8">
+
+    <div class="flex flex-col md:flex-row gap-6">
+
+        <app-filters type="order" *ngIf="orders?.length !== 0" (statusChanged)="filteredOrder($event)"></app-filters>
+
+        <div class="flex-1">
+
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-700 mb-6 text-center sm:text-left pb-4" *ngIf="paginatedOrders.length !== 0">My Orders</h2>
+
+            <div *ngIf="paginatedOrders.length === 0"
+                class="text-center py-10 text-gray-500 text-3xl font-medium">
+                You have not placed any orders yet.
+            </div> 
+
+            <div *ngIf="orders?.length" class="flex flex-col gap-4">
+
+                <div *ngFor="let order of paginatedOrders"
+                    class="flex flex-col sm:flex-row items-center justify-between bg-gray-50 shadow-inner hover:bg-slate-100 transition duration-300 rounded-xl p-4 sm:p-6 cursor-pointer gap-4"
+                    (click)="trackOrder(order._id)">
+
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <img [src]="'http://localhost:3000' + order.orderItems[0]?.product?.images[0]"
+                            alt="{{ order.orderItems[0]?.name }}"
+                            class="w-24 h-24 sm:w-20 sm:h-20 object-cover rounded-lg shadow-sm">
+                        <div>
+                            <p class="text-gray-800 font-semibold text-lg sm:text-base truncate">
+                                {{ order.orderItems[0]?.name }}
+                            </p>
+                            <p *ngIf="order.orderItems.length > 1" class="text-gray-500 text-sm mt-1">
+                                +{{ order.orderItems.length - 1 }} more item{{ order.orderItems.length > 2 ? 's' : '' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="text-center flex-1 mt-2 sm:mt-0">
+                        <p class="text-gray-900 font-bold text-lg sm:text-base">₹{{ order.totalPrice }}</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-2 sm:mt-0">
+                        <span [ngClass]="{
+                'text-green-600 font-semibold': order.status === 'Delivered',
+                'text-blue-600 font-semibold': order.status === 'Shipped',
+                'text-yellow-500 font-semibold': order.status === 'Pending',
+                'text-red-500 font-semibold': order.status === 'Cancelled'
+              }" class="px-3 py-1 rounded-full text-sm border border-gray-300 whitespace-nowrap">
+                            {{ order.status }}
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div *ngIf="filteredOrders.length > rows" class="flex justify-center mt-6">
+                <p-paginator [rows]="rows" [totalRecords]="filteredOrders.length" [first]="first"
+                    (onPageChange)="onPageChange($event)" [rowsPerPageOptions]="[3,6,9,12]">
+                </p-paginator>
+            </div>
+
+        </div>
+    </div>
+</div>

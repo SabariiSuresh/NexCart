@@ -1,0 +1,9 @@
+<div *ngIf="loading" class="fixed inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+  <p-progressSpinner strokeWidth="7" animationDuration=".9s"></p-progressSpinner>
+  <p class="text-white mt-4 text-lg font-medium animate-pulse">Loading...</p>
+</div>
+
+
+<app-navbar></app-navbar>
+<router-outlet></router-outlet>
+<app-footer></app-footer>

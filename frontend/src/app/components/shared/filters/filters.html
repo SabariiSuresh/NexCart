@@ -1,0 +1,95 @@
+<div class="md:hidden flex justify-end mb-4">
+  <p-button label="Filters" icon="pi pi-sliders-h" [raised]="true" severity="secondary" (onClick)="showDrawer = true">
+  </p-button>
+</div>
+
+<aside class="hidden md:flex w-full md:w-72 bg-gray-50 p-6 rounded-2xl shadow-inner flex-col gap-8">
+  <ng-container *ngTemplateOutlet="filterContent"></ng-container>
+</aside>
+
+<p-drawer [(visible)]="showDrawer" position="right" [dismissible]="true" [modal]="true" [showCloseIcon]="false"
+  class="md:hidden w-80">
+  <div class="p-4">
+    <ng-container *ngTemplateOutlet="filterContent"></ng-container>
+  </div>
+</p-drawer>
+
+<ng-template #filterContent>
+
+  <h2 class="text-4xl sm:text-2xl font-bold text-gray-700 border-b pb-5 mb-4">Filters</h2>
+
+  <ng-container *ngIf="type === 'product'">
+
+    <div class="flex flex-col gap-3">
+      <h3 class="font-bold text-gray-700 text-xl">Price</h3>
+      <p-slider [(ngModel)]="filter.priceRange" [min]="0" [max]="50000" [step]="500" [range]="true"></p-slider>
+      <p class="mt-1 text-slate-500 font-bold">
+        Selected: <span class="text-slate-900">₹ {{ filter.priceRange[0] }} - ₹ {{ filter.priceRange[1] }}</span>
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-3" *ngIf="filter.isParent && filter.categories.length">
+      <h3 class="font-bold text-gray-700 text-xl">Category</h3>
+      <p-select [options]="filter.categories" [(ngModel)]="filter.selectedCategory" placeholder="Select Category"
+        styleClass="w-full" (onChange)="onCategoryChange($event.value)">
+      </p-select>
+    </div>
+
+    <div class="flex flex-col gap-3" *ngIf="filter.isParent && filter.subcategoryOptions.length">
+      <h3 class="font-bold text-gray-700 text-xl">Subcategory</h3>
+      <p-multiSelect [options]="filter.subcategoryOptions" [(ngModel)]="filter.selectedSubcategories"
+        placeholder="Select Subcategories" display="chip" optionLabel="label" optionValue="value" styleClass="w-full">
+      </p-multiSelect>
+    </div>
+
+
+    <div class="flex flex-col gap-3" *ngIf="filter.brands.length">
+      <h3 class="font-bold text-gray-700 text-xl">Brand</h3>
+      <p-multiSelect [options]="filter.brandOptions" [(ngModel)]="filter.selectedBrands" placeholder="Select Brand"
+        display="chip" optionLabel="label" optionValue="value" styleClass="w-full">
+      </p-multiSelect>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <h3 class="font-bold text-gray-700 text-xl">Discount</h3>
+      <p-multiSelect
+        [options]="[{label:'5% or more', value:5},{label:'20% or more',value:20},{label:'30% or more',value:30}]"
+        [(ngModel)]="filter.selectedDiscounts" placeholder="Select Discount" display="chip" optionLabel="label"
+        optionValue="value" styleClass="w-full">
+      </p-multiSelect>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <h3 class="font-bold text-gray-700 text-xl">Rating</h3>
+      <p-rating [(ngModel)]="filter.selectedRating" [stars]="5"></p-rating>
+      <p class="text-gray-600 text-sm">Minimum rating: {{ filter.selectedRating || 0 }} ★</p>
+    </div>
+
+    <div class="gap-4 flex justify-center mt-4">
+      <p-button label="Apply Filter" icon="pi pi-filter" [raised]="true" (onClick)="apply()"></p-button>
+      <p-button label="Reset" severity="secondary" [raised]="true" icon="pi pi-refresh" (onClick)="reset()"></p-button>
+    </div>
+
+  </ng-container>
+
+  <ng-container *ngIf="type === 'order'">
+
+    <div class="flex flex-col gap-3 pb-2">
+      <div class="flex items-center justify-between pb-2">
+        <h3 class="font-bold text-gray-700 text-2xl">Order Status</h3>
+        <p-button icon="pi pi-refresh" variant="text" severity="danger" (onClick)="filterOrderStatus('All')"></p-button>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <button *ngFor="let status of orderStatuses" (click)="filterOrderStatus(status)" [ngClass]="{
+            'bg-teal-400 text-white': selectedStatus === status,
+            'bg-slate-200 text-gray-700 hover:bg-cyan-50': selectedStatus !== status
+          }" class="px-4 py-2 rounded-full text-sm transition duration-200 text-center">
+          {{ status }}
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+
+</ng-template>

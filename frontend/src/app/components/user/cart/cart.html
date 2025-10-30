@@ -1,0 +1,92 @@
+<div class="p-4 sm:p-6  min-h-screen">
+
+    <div *ngIf="cartItems.length === 0" class="font-semibold text-gray-500 text-3xl text-center py-10">
+        Your cart is empty.
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-6">
+
+        <div class="flex-1 flex flex-col gap-6">
+
+            <div *ngIf="cartItems.length > 0" class="flex flex-col gap-6">
+
+                <div *ngFor="let item of paginatedProducts"
+                    class="bg-gray-50 rounded-xl shadow-inner p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+
+                    <div class="flex items-center gap-5 cursor-pointer flex-1" (click)="viewProduct(item.product._id)">
+                        <img [src]="'http://localhost:3000' + item.product.images[0]" alt="{{item.product.name}}"
+                            class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg shadow-sm">
+                        <div class="flex flex-col gap-1">
+                            <h3 class="font-bold text-gray-800 text-lg sm:text-xl">{{ item.product.name }}</h3>
+
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="pi"
+                                    [ngClass]="item.product?.stock > 0 ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
+                                <span class="text-gray-700">
+                                    {{ item.product.stock > 0 ? 'In Stock' : 'Out of Stock' | titlecase}}
+                                </span>
+                            </div>
+
+                            <p class="text-gray-500 text-sm sm:text-base">Price: ₹{{ item.product.price }}</p>
+                            <p class="text-gray-500 text-sm sm:text-base">Quantity: {{ item.quantity }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 justify-center sm:justify-end">
+                        <p-button icon="pi pi-trash" label="Remove" severity="danger" variant="text"
+                            (click)="removeItem($event , item.product._id)">
+                        </p-button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div *ngIf="cartItems.length > pageSize" class="flex justify-center pb-3 pt-8">
+                <p-paginator [rows]="pageSize" [totalRecords]="cartItems.length" [rowsPerPageOptions]="[4, 8, 12]"
+                    (onPageChange)="onPageChange($event)">
+                </p-paginator>
+            </div>
+        </div>
+        <div class="flex flex-col items-center lg:items-start w-full lg:w-[32%]">
+
+            <aside *ngIf="cartItems.length != 0"
+                class="bg-gray-50 rounded-xl shadow-inner p-4 sm:p-6 flex flex-col gap-3 w-full text-sm sm:text-base sticky self-start">
+                <h3 class="font-bold text-gray-700 text-lg border-b">Price Details</h3>
+                <div class="flex justify-between">
+                    <span>Price ({{ cartItems.length }} items)</span>
+                    <strong>{{ total | currency:'INR' }}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Discount</span>
+                    <strong>-{{ totalDiscount | currency : 'INR' }}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Buy more & save more</span>
+                    <strong>-₹0</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span>Coupons for you</span>
+                    <strong>-₹0</strong>
+                </div>
+                <div class="flex justify-between font-bold text-gray-900 border-t pt-2 mt-2">
+                    <span>Total Amount</span>
+                    <strong>{{ total | currency:'INR' }}</strong>
+                </div>
+            </aside>
+
+            <div class="flex justify-center gap-6 pt-8 w-full" *ngIf="cartItems.length != 0">
+                <p-button label="Place Order" severity="warn" variant="outlined" icon="pi pi-check-circle"
+                    (click)="placeOrder()">
+                </p-button>
+                <p-button label="Clear Cart" severity="danger" variant="outlined" icon="pi pi-times-circle"
+                    (click)="clearCart($event)">
+                </p-button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <p-confirmpopup />
+</div>

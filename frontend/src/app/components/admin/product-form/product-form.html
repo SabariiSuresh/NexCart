@@ -1,0 +1,72 @@
+<form [formGroup]="productForm" (ngSubmit)="submitForm()">
+  <div class="grid gap-4">
+
+    <input pInputText placeholder="Product Name" formControlName="name" />
+    <input pInputText placeholder="Description" formControlName="description" />
+
+    <input pInputText placeholder="Brand" formControlName="brand" />
+
+    <p-treeSelect *ngIf="productTrees.length" [options]="productTrees" formControlName="category"
+      placeholder="Select Category" selectionMode="single" appendTo="body"
+      (onNodeSelect)="onCategoryChange($event.node.key)">
+    </p-treeSelect>
+
+    <div formGroupName="features" *ngIf="featuresGroup" class="border p-4 rounded-md bg-gray-50">
+      <h3 class="text-lg font-semibold mb-3 pb-2">Product Features</h3>
+
+      <div *ngIf="featureKeys.length === 0" class="text-gray-500 p-2">
+        No features defined for this category.
+      </div>
+
+      <div *ngFor="let key of featureKeys; let i = index" class="flex items-center gap-3 mb-2 pb-2">
+        <input pInputText [formControlName]="key" placeholder="Feature Value" class="flex-1" />
+        <span class="w-40 text-gray-700 font-medium">{{ key | titlecase}}</span>
+        <p-button icon="pi pi-trash" severity="danger" class="ml-2" (click)="removeFeature(key)" type="button">
+        </p-button>
+      </div>
+
+      <div class="flex gap-2 mt-3">
+        <input pInputText #newFeatureName placeholder="Feature Name" class="flex-1" />
+        <input pInputText #newFeatureValue placeholder="Feature Value" class="flex-1" />
+        <p-button icon="pi pi-plus" class="ml-2" (click)="addFeature(newFeatureName, newFeatureValue)" type="button">
+        </p-button>
+      </div>
+    </div>
+
+
+    <input pInputText placeholder="Price" type="number" formControlName="price" />
+    <input pInputText placeholder="Old Price" type="number" formControlName="oldPrice" (input)="calculateDiscount()" />
+
+    <input pInputText placeholder="Discount (%)" type="number" formControlName="discount" readonly />
+
+    <input pInputText placeholder="Stock" type="number" formControlName="stock" />
+
+    <div formArrayName="images" class="border p-4 rounded-md bg-gray-50 mt-4">
+      <h3 class="text-lg font-semibold mb-3 pb-2">Product Images</h3>
+
+      <div *ngFor="let imgCtrl of images.controls; let i = index" class="flex items-center gap-4 mb-3">
+
+        <div class="flex items-center gap-2 flex-1">
+          <input #fileInput type="file" hidden (change)="onFileChange($event, i)" />
+          <p-button label="Choose File" icon="pi pi-upload" (click)="fileInput.click()"></p-button>
+          <span *ngIf="images.at(i).value?.file" class="truncate text-gray-700 ml-2">
+            {{ images.at(i).value.file.name }}
+          </span>
+        </div>
+
+        <div *ngIf="imgCtrl.value.preview">
+          <img [src]="imgCtrl.value.preview" class="h-20 w-20 object-cover rounded-md border" />
+        </div>
+
+        <div>
+          <p-button icon="pi pi-trash" severity="danger" (click)="removeImage(i)" type="button"></p-button>
+        </div>
+      </div>
+
+
+    </div>
+
+
+    <button pButton type="submit" label="Save" class="mt-4 w-full"></button>
+  </div>
+</form>

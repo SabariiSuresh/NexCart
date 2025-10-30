@@ -1,0 +1,45 @@
+<div class="p-4 bg-gray-100 min-h-screen text-black">
+    <h2 class="font-bold text-5xl pb-7 pt-1 text-left">Manage Payments</h2>
+
+    <p-table [value]="payments" class="shadow-lg rounded-lg overflow-hidden" selectionMode="single"
+        styleClass="p-datatable-gridlines min-w-full" [rows]="10" [paginator]="true">
+
+        <ng-template pTemplate="header">
+            <tr class="text-white">
+                <th>Customer</th>
+                <th>Order ID</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Payment Status</th>
+                <th>Transaction ID</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-payment>
+            <tr class="hover:bg-gray-200">
+                <td> {{ payment.orderId?.user?.name || 'N/A' }} </td>
+                <td> {{ payment.orderId?._id || 'N/A' }} </td>
+                <td> {{ payment.amount | currency :'INR' }} </td>
+                <td> {{ payment.method | uppercase}} </td>
+                <td>
+                    <p-select [options]="statusOptions" [(ngModel)]="payment.status"
+                        (onChange)="updateStatus(payment._id , $event.value)" class="w-64" appendTo="body"></p-select>
+                </td>
+                <td> {{ payment.transactionId }} </td>
+                <td> {{ payment.createdAt | date : 'EEE MMM d , y' }} </td>
+                <td>
+                    <p-button pTooltip="Delete" tooltipPosition="bottom" icon="pi pi-trash" severity="danger" variant="text"
+                        (onClick)="deletePayment($event ,payment._id)" />
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+
+    <div>
+        <p-confirmpopup />
+    </div>
+
+</div>
