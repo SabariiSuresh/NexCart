@@ -23,6 +23,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/frontend",
+            "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -31,7 +33,6 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/static.json",
               {
                 "glob": "**/*",
                 "input": "public"
