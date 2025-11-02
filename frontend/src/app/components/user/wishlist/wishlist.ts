@@ -25,6 +25,7 @@ export class Wishlist implements OnInit {
   constructor(private wishlistService: WishlistService, private filter: FilterService, private notify: NotificationService, private confirmationService: ConfirmationService, private router: Router) { }
 
   ngOnInit(): void {
+    this.filter.resetFilter();
     this.loadWishlist();
   }
 

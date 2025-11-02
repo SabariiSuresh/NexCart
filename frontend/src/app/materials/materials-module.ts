@@ -36,6 +36,7 @@ import { GalleriaModule } from 'primeng/galleria';
 import { FileUploadModule } from 'primeng/fileupload';
 import { DrawerModule } from 'primeng/drawer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
 
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
@@ -46,6 +47,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     FileUploadModule,
     SliderModule,
+    OverlayBadgeModule,
     DrawerModule,
     GalleriaModule,
     MultiSelectModule,
@@ -86,6 +88,7 @@ import { MatButtonModule } from '@angular/material/button';
   exports: [
     DynamicDialogModule,
     MatButtonModule,
+    OverlayBadgeModule,
     MatIconModule,
     GalleriaModule,
     FileUploadModule,

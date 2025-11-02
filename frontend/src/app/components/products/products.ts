@@ -81,7 +81,7 @@ export class ProductView implements OnInit {
     this.cartservice.addToCart(this.product._id, quantity).subscribe({
 
       next: res => {
-        this.notify.success('Added to cart');
+        this.notify.success('Product Added to cart');
       },
       error: err => {
         console.error(err);

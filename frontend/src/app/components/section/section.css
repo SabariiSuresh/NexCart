@@ -1,7 +1,3 @@
-::-webkit-scrollbar {
-  width: 0px;
-}
-
 .group:hover {
   box-shadow: 0 8px 25px rgba(0, 128, 128, 0.15);
 }

@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { BehaviorSubject, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private authUrl = 'http://localhost:3000/auth';
+  private authUrl = environment.apiUrl + '/auth';
 
   private authDialogeState = new BehaviorSubject<boolean>(false);
   authDialog$ = this.authDialogeState.asObservable();
@@ -99,7 +100,7 @@ export class AuthService {
     try {
 
       const decode: any = jwtDecode(token);
-      return decode.name ||'';
+      return decode.name || '';
 
 
     } catch (err) {
@@ -119,7 +120,7 @@ export class AuthService {
   logOut() {
     localStorage.removeItem('token');
     this.updateUserName();
-    window.location.reload();
+    this.router.navigate(['/home']);
   }
 
 

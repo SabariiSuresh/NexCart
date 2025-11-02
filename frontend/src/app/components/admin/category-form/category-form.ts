@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoryService } from '../../../services/category/category-service';
 import { TreeNode } from 'primeng/api';
 import { NotificationService } from '../../../services/notification/notification-service';
-
+import { FileUpload } from 'primeng/fileupload';
 @Component({
   selector: 'app-category-form',
   standalone: false,
@@ -14,9 +14,13 @@ export class CategoryForm implements OnInit, OnChanges {
 
   @Input() category: any = null;
   @Output() formSaved = new EventEmitter<boolean>();
+  @ViewChild('fileUpload') fileUpload!: FileUpload;
 
   categoryForm!: FormGroup;
   treeCategories: any;
+
+  selectedFile: File | null = null;
+  preview: string | ArrayBuffer | null = null;
 
   constructor(private categoryservice: CategoryService, private form: FormBuilder, private notify: NotificationService) { }
 
@@ -32,7 +36,7 @@ export class CategoryForm implements OnInit, OnChanges {
         name: this.category?.name || '',
         description: this.category?.description || '',
         parent: this.category?.parent?._id || null,
-        type : this.category?.type || ''
+        type: this.category?.type || ''
       });
     }
   }
@@ -43,7 +47,7 @@ export class CategoryForm implements OnInit, OnChanges {
       name: [this.category?.name || '', Validators.required],
       description: [this.category?.description || '', Validators.required],
       parent: [this.category?.parent?._id || null],
-      type : [this.category?.type || '' , Validators.required]
+      type: [this.category?.type || '', Validators.required]
     });
   }
 
@@ -68,60 +72,71 @@ export class CategoryForm implements OnInit, OnChanges {
     }));
   }
 
-
-
   submitForm() {
+    const formValue = new FormData();
 
-    const formValue = {
-      ...this.categoryForm.value
+    Object.entries(this.categoryForm.value).forEach(([key, value]) => {
+      formValue.append(key, value as string);
+    });
+
+    if (this.selectedFile !== null) {
+      formValue.append('image', this.selectedFile);
     }
 
-    if (formValue.parent && typeof formValue.parent === 'object') {
-      formValue.parent = formValue.parent.key || formValue.parent.data?._id || null;
-      console.log('Trigger', formValue)
-    }
-
-    if (this.category && formValue.parent === this.category._id) {
-      this.notify.success('Cannot set category as its own parent');
+    if (this.category && formValue.get('parent') === this.category._id) {
+      this.notify.error('Cannot set category as its own parent');
       return;
     }
 
     if (this.category) {
-
       this.categoryservice.updateCategory(this.category._id, formValue).subscribe({
-
         next: () => {
-          this.notify.success('Category updated')
-
+          this.notify.success('Category updated');
           this.formSaved.emit(true);
-
-        }, error: err => {
-          this.notify.error('Failed to updated Category');
+          this.resetForm();
+        },
+        error: err => {
+          this.notify.error('Failed to update category');
           console.error('Update error', err);
         }
-      })
-
+      });
     } else {
-
       this.categoryservice.createCategory(formValue).subscribe({
-
         next: () => {
-
           this.notify.success('Category added');
-
           this.formSaved.emit(true);
-
-          this.categoryForm.reset();
-
-        }, error: err => {
-          this.notify.error('Failed to add Category');
+          this.resetForm();
+        },
+        error: err => {
+          this.notify.error('Failed to add category');
           console.error('Create error', err);
         }
-      })
-
+      });
     }
-
   }
 
+
+  resetForm() {
+    this.categoryForm.reset();
+    this.selectedFile = null;
+    this.preview = null;
+
+    if (this.fileUpload) {
+      this.fileUpload.clear();
+    }
+  }
+
+
+
+  onFileSelected(event: any) {
+    const file = event.files?.[0];
+    if (!file) return;
+
+    this.selectedFile = file;
+
+    const reader = new FileReader();
+    reader.onload = () => (this.preview = reader.result);
+    reader.readAsDataURL(file);
+  }
 
 }

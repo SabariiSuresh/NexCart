@@ -6,6 +6,8 @@ import { NotificationService } from '../../services/notification/notification-se
 import { DialogService } from 'primeng/dynamicdialog';
 import { Profile } from '../profile/profile';
 import { MenuItem } from 'primeng/api';
+import { CartService } from '../../services/cart/cart-service';
+import { WishlistService } from '../../services/wishlist/wishlist-service';
 
 @Component({
   selector: 'app-navbar',
@@ -25,8 +27,10 @@ export class Navbar implements OnInit {
 
   mobileMenuVisible: boolean = false;
 
+  cartCount: number = 0;
+  wishlistcount: number = 0;
 
-  constructor(private notify: NotificationService, private router: Router, private authservice: AuthService, private productService: ProductService, private dialogService: DialogService) { }
+  constructor(private notify: NotificationService, private router: Router, private authservice: AuthService, private productService: ProductService, private dialogService: DialogService, private cartService: CartService, private wishlistService: WishlistService) { }
 
   ngOnInit(): void {
     this.authservice.userName$.subscribe(name => {
@@ -34,7 +38,18 @@ export class Navbar implements OnInit {
       if (this.isLoggedIn && name) {
         this.menuList();
       }
+    });
+
+    this.cartService.getCart().subscribe();
+    this.cartService.cartCount$.subscribe(count => {
+      this.cartCount = count;
     })
+
+    this.wishlistService.getWishlist().subscribe();
+    this.wishlistService.wishlistCount$.subscribe(count => {
+      this.wishlistcount = count
+    })
+
   }
 
   menuList() {
@@ -212,11 +227,14 @@ export class Navbar implements OnInit {
 
 
   logOut() {
+
     setTimeout(() => {
       this.authservice.logOut();
     }, 1000)
-    this.notify.success('You Logouted');
+    this.notify.success('You successfully logged outed');
+
   }
+
 
   navigate(route: string) {
     this.router.navigate([`/admin/${route}`]);

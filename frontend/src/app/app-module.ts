@@ -28,6 +28,7 @@ import { Profile } from './components/profile/profile';
 import { Badge } from "primeng/badge";
 import { SharedModule } from './components/shared/shared-module';
 import { Wildcard } from './components/wildcard/wildcard';
+import { Section } from './components/section/section';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { Wildcard } from './components/wildcard/wildcard';
     Search,
     PaymentDialog,
     Profile,
-    Wildcard
+    Wildcard,
+    Section
   ],
   imports: [
     BrowserModule,

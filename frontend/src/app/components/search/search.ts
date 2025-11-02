@@ -36,6 +36,7 @@ export class Search {
   ) { }
 
   ngOnInit(): void {
+    this.filter.resetFilter();
     this.route.queryParams.subscribe(params => {
       this.query = params['q'] || '';
       this.page = +params['page'] || 1;

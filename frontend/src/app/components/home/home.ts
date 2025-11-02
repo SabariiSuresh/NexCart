@@ -16,7 +16,7 @@ export class Home implements OnInit {
 
   banners = [
     { image: 'assets/bigsale.png' },
-    { image: 'assets/new.png' },
+    { image: 'assets/new.jpg' },
     { image: 'assets/offer.png' }
   ];
 
@@ -43,7 +43,7 @@ export class Home implements OnInit {
 
   loadSections() {
 
-    this.productService.getSections(6).subscribe({
+    this.productService.getSections(8).subscribe({
       next: (res: any) => {
         const blocks = [];
 
@@ -101,6 +101,10 @@ export class Home implements OnInit {
   viewProduct(productId: string) {
     this.router.navigate(['/products', productId]);
     console.log('click', productId)
+  }
+
+  navigateSections(key: string) {
+    this.router.navigate(['/section', key])
   }
 
 }

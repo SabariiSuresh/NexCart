@@ -1,13 +1,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+interface wishListResp {
+  wishList?: {
+    items?: any[];
+  };
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class WishlistService {
 
-  private wishlistUrl = 'http://localhost:3000/wishlists';
+  private wishlistUrl = environment.apiUrl + '/wishlists';
+
+  private wishlistCountSub = new BehaviorSubject<number>(0);
+  wishlistCount$ = this.wishlistCountSub.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -26,12 +36,19 @@ export class WishlistService {
 
 
   addWishlist(data: any): Observable<any> {
-    return this.http.post(`${this.wishlistUrl}/add`, data, this.getAuthHeaders());
+    return this.http.post(`${this.wishlistUrl}/add`, data, this.getAuthHeaders()).pipe(
+      tap(() => this.refreshWishlist())
+    );
   }
 
 
   getWishlist(): Observable<any> {
-    return this.http.get(`${this.wishlistUrl}`, this.getAuthHeaders());
+    return this.http.get<wishListResp>(`${this.wishlistUrl}`, this.getAuthHeaders()).pipe(
+      tap(res => {
+        const count = res?.wishList?.items?.length || 0;
+        this.wishlistCountSub.next(count);
+      })
+    );
   }
 
 
@@ -39,9 +56,13 @@ export class WishlistService {
     return this.http.request('delete', `${this.wishlistUrl}/remove`, {
       body: { productId },
       ...this.getAuthHeaders()
-    });
+    }).pipe(
+      tap(() => this.refreshWishlist())
+    );
   }
 
-
+  private refreshWishlist() {
+    this.getWishlist().subscribe();
+  }
 
 }

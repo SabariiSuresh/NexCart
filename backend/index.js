@@ -1,7 +1,7 @@
 
 const express = require('express');
 const cors = require('cors');
-const { connectDb } = require('./dataBase/mongoose');4
+const { connectDb } = require('./dataBase/mongoose');
 const path = require('path');
 require('dotenv').config();
 

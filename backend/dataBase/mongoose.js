@@ -1,12 +1,12 @@
 
-const moongoose = require('mongoose');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 async function connectDb() {
     
     try{
 
-        await moongoose.connect( process.env.MONGO_URL , {
+        await mongoose.connect( process.env.MONGO_URL , {
             dbName : 'eShop-db'
         });
 

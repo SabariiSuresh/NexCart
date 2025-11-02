@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../../services/order/order-service';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../../services/notification/notification-service';
+import { FilterService } from '../../../services/filter/filter-service';
 
 interface Step {
   label: string;
@@ -25,13 +26,13 @@ export class MyOrders implements OnInit {
 
   orderStatus = ['Pending', 'Shipped', 'Delivered', 'Cancelled'];
 
-  selectedStatus : string = 'All'
+  selectedStatus: string = 'All'
   filteredOrders: any[] = [];
 
-  constructor(private orderService: OrderService, private router: Router, private notify: NotificationService) { }
+  constructor(private orderService: OrderService, private router: Router, private notify: NotificationService, private filter: FilterService) { }
 
   ngOnInit(): void {
-
+    this.filter.resetFilter();
     this.steps = this.orderStatus.map(status => ({
       label: status,
       description: this.getStepMessage(status)

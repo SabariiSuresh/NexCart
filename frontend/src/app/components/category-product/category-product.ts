@@ -26,6 +26,8 @@ export class CategoryProduct implements OnInit {
 
   ngOnInit(): void {
 
+    this.filter.resetFilter();
+
     this.route.paramMap.subscribe(params => {
       const categoryId = params.get('category') || '';
       if (categoryId) {
@@ -48,7 +50,6 @@ export class CategoryProduct implements OnInit {
         this.setPaginatedProducts();
         this.categoryType(this.categoryName);
         this.applyFilters();
-        console.log(categoryId, this.categoryName)
       },
       error: err => console.error(err)
     })

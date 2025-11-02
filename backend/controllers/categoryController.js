@@ -3,39 +3,52 @@ const Category = require('../models/category.model');
 
 
 exports.createCategory = async (req, res) => {
-
     try {
+        const { name, description, parent, type } = req.body;
 
-        const { name , description , parent , type} = req.body;
+        const parentValue =
+            parent && parent !== 'null' && parent !== '' ? parent : null;
 
-        const category = new Category({ name , description , parent : parent || null , type });
+        const image = req.file ? `/upload/categories/${req.file.filename}` : '';
+
+        const category = new Category({
+            name,
+            description,
+            parent: parentValue,
+            type,
+            image,
+        });
 
         const newCategory = await category.save();
 
-        return res.status(201).json({ message: 'Category created successfully', category: newCategory });
-
+        return res.status(201).json({
+            message: 'Category created successfully',
+            category: newCategory,
+        });
     } catch (err) {
-
-        return res.status(500).json({ message: 'Failed to create category', error: err.message });
-
+        return res.status(500).json({
+            message: 'Failed to create category',
+            error: err.message,
+        });
     }
 };
+
 
 
 exports.getCategories = async (req, res) => {
 
     try {
 
-        const rootCategories = await Category.find({ parent : null });
+        const rootCategories = await Category.find({ parent: null });
 
-        const buildCategoryTree = async (category)=> {
+        const buildCategoryTree = async (category) => {
 
-            const children = await Category.find({ parent : category._id});
+            const children = await Category.find({ parent: category._id });
             const categoryObj = category.toObject();
 
-            if( children.length > 0 ) {
+            if (children.length > 0) {
 
-                categoryObj.children = await Promise.all( children.map(buildCategoryTree) );
+                categoryObj.children = await Promise.all(children.map(buildCategoryTree));
 
             }
 
@@ -43,7 +56,7 @@ exports.getCategories = async (req, res) => {
 
         }
 
-        const nestedCategories = await Promise.all( rootCategories.map(buildCategoryTree) );
+        const nestedCategories = await Promise.all(rootCategories.map(buildCategoryTree));
 
         return res.status(200).json({ message: 'Nested categories', categories: nestedCategories });
 
@@ -59,7 +72,7 @@ exports.getCategoryById = async (req, res) => {
 
     try {
 
-        const category = await Category.findById(req.params.id).populate('parent' , 'name');
+        const category = await Category.findById(req.params.id).populate('parent', 'name');
 
         if (!category) {
 
@@ -78,38 +91,38 @@ exports.getCategoryById = async (req, res) => {
     }
 };
 
-
 exports.updateCategory = async (req, res) => {
-
     try {
+        const data = { ...req.body };
 
-        const category = await Category.findByIdAndUpdate(req.params.id , req.body , { new : true });
-
-         if (!category) {
-
-            return res.status(404).json({ message: 'Category not found' });
-
-        } else {
-
-            return res.status(201).json({ message: 'Category updated', category: category });
-
+        if (!data.parent || data.parent === 'null' || data.parent === '') {
+            data.parent = null;
         }
 
+        if (req.file) {
+            data.image = `/upload/categories/${req.file.filename}`;
+        }
+
+        const category = await Category.findByIdAndUpdate(req.params.id, data, { new: true });
+
+        if (!category) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        return res.status(200).json({ message: 'Category updated', category });
     } catch (err) {
-
         return res.status(500).json({ message: 'Failed to update category', error: err.message });
-
     }
 };
 
 
-exports.deleteCategory = async (req , res)=> {
+exports.deleteCategory = async (req, res) => {
 
     try {
 
-        const category = await Category.findByIdAndDelete(req.params.id , req.body);
+        const category = await Category.findByIdAndDelete(req.params.id, req.body);
 
-           if (!category) {
+        if (!category) {
 
             return res.status(404).json({ message: 'Category not found' });
 
@@ -118,7 +131,7 @@ exports.deleteCategory = async (req , res)=> {
             return res.status(201).json({ message: 'Category deleted', category: category });
 
         }
-        
+
     } catch (err) {
 
         return res.status(500).json({ message: 'Failed to delete category', error: err.message });
@@ -128,10 +141,10 @@ exports.deleteCategory = async (req , res)=> {
 
 
 exports.getCategoriesPublic = async (req, res) => {
-  try {
-    const categories = await Category.find({ parent: null });
-    return res.status(200).json({ categories });
-  } catch (err) {
-    return res.status(500).json({ message: 'Failed to fetch categories', error: err.message });
-  }
+    try {
+        const categories = await Category.find({ parent: null });
+        return res.status(200).json({ categories });
+    } catch (err) {
+        return res.status(500).json({ message: 'Failed to fetch categories', error: err.message });
+    }
 };

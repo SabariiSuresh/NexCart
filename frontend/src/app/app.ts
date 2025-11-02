@@ -16,7 +16,7 @@ export class App implements OnInit{
     this.loderService.isLoading.subscribe((res)=>{
       this.loading = res;
       this.change.detectChanges();
-    })
+    });
   }
 
   ngOnInit() {

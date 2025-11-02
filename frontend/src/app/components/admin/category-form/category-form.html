@@ -6,6 +6,12 @@
       placeholder="Parent Category" formControlName="parent"></p-treeSelect>
     <input pInputText placeholder="Category Type" formControlName="type" />
     <input pInputText placeholder="Description" formControlName="description" />
+    <div class="mt-3">
+      <p-fileUpload #fileUplod name="image" mode="advanced" accept="image/*" [auto]="true" chooseLabel="Upload Image"
+        customUpload="true" (uploadHandler)="onFileSelected($event)" [showUploadButton]="false"
+        [showCancelButton]="false" [maxFileSize]="2000000">
+      </p-fileUpload>
+    </div>
 
     <button pButton type="submit" label="Save" class="mt-4 w-full"></button>
   </div>
