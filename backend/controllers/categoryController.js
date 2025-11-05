@@ -1,15 +1,21 @@
 
 const Category = require('../models/category.model');
-
+const cloudinary = require('../config/cloudinary')
 
 exports.createCategory = async (req, res) => {
     try {
         const { name, description, parent, type } = req.body;
 
+        const existingCategory = await Category.findOne({ name });
+
+        if (existingCategory) {
+            return res.status(400).json({ success: false, message: 'Category name already exists' })
+        }
+
         const parentValue =
             parent && parent !== 'null' && parent !== '' ? parent : null;
 
-        const image = req.file ? `/upload/categories/${req.file.filename}` : '';
+        const image = req.file ? req.file.path : '';
 
         const category = new Category({
             name,
@@ -22,11 +28,13 @@ exports.createCategory = async (req, res) => {
         const newCategory = await category.save();
 
         return res.status(201).json({
+            success: true,
             message: 'Category created successfully',
             category: newCategory,
         });
     } catch (err) {
         return res.status(500).json({
+            success: false,
             message: 'Failed to create category',
             error: err.message,
         });
@@ -58,11 +66,11 @@ exports.getCategories = async (req, res) => {
 
         const nestedCategories = await Promise.all(rootCategories.map(buildCategoryTree));
 
-        return res.status(200).json({ message: 'Nested categories', categories: nestedCategories });
+        return res.status(200).json({ success: true, message: 'Nested categories', categories: nestedCategories });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch Nested categories', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch Nested categories', error: err.message });
 
     }
 };
@@ -76,17 +84,17 @@ exports.getCategoryById = async (req, res) => {
 
         if (!category) {
 
-            return res.status(404).json({ message: 'Category not found' });
+            return res.status(404).json({ success: false, message: 'Category not found' });
 
         } else {
 
-            return res.status(200).json({ message: 'Category', category: category });
+            return res.status(200).json({ success: true, message: 'Category', category: category });
 
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch category', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch category', error: err.message });
 
     }
 };
@@ -99,52 +107,74 @@ exports.updateCategory = async (req, res) => {
             data.parent = null;
         }
 
-        if (req.file) {
-            data.image = `/upload/categories/${req.file.filename}`;
-        }
-
-        const category = await Category.findByIdAndUpdate(req.params.id, data, { new: true });
+        const category = await Category.findById(req.params.id);
 
         if (!category) {
-            return res.status(404).json({ message: 'Category not found' });
+            return res.status(404).json({ success: false, message: 'Category not found' });
         }
 
-        return res.status(200).json({ message: 'Category updated', category });
+        if (req.file) {
+            if (category.image) {
+                try {
+
+                    const publicId = category.image
+                        .split('/')
+                        .slice(-2)
+                        .join('/')
+                        .split('.')[0];
+
+                    await cloudinary.uploader.destroy(publicId);
+                } catch (err) {
+                    console.error('Failed to delete old image:', err.message);
+                }
+            }
+
+            data.image = req.file.path;
+        }
+
+
+        const updatedCategory = await Category.findByIdAndUpdate(req.params.id, data, { new: true });
+
+        return res.status(200).json({ success: true, message: 'Category updated successfully', updatedCategory });
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to update category', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to update category', error: err.message });
     }
 };
-
 
 exports.deleteCategory = async (req, res) => {
-
     try {
-
-        const category = await Category.findByIdAndDelete(req.params.id, req.body);
+        const category = await Category.findById(req.params.id);
 
         if (!category) {
-
-            return res.status(404).json({ message: 'Category not found' });
-
-        } else {
-
-            return res.status(201).json({ message: 'Category deleted', category: category });
-
+            return res.status(404).json({ success: false, message: 'Category not found' });
         }
 
+        if (category.image) {
+            const imageUrl = category.image;
+            const publicId = imageUrl.substring(
+                imageUrl.lastIndexOf('nexcart/categories/'),
+                imageUrl.lastIndexOf('.')
+            );
+            await cloudinary.uploader.destroy(publicId);
+        }
+
+        await Category.findByIdAndDelete(req.params.id);
+
+        return res.status(200).json({ success: true, message: 'Category deleted successfully' });
     } catch (err) {
-
-        return res.status(500).json({ message: 'Failed to delete category', error: err.message });
-
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to delete category',
+            error: err.message,
+        });
     }
 };
-
 
 exports.getCategoriesPublic = async (req, res) => {
     try {
         const categories = await Category.find({ parent: null });
-        return res.status(200).json({ categories });
+        return res.status(200).json({ success: true, categories, message: 'Public categories fetched successfully', });
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to fetch categories', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch categories', error: err.message });
     }
 };

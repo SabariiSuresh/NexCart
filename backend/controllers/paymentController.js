@@ -14,19 +14,19 @@ exports.createPayment = async (req, res) => {
         const order = await Order.findById(orderId);
 
         if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
+            return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
 
         if (order.user.toString() !== req.user.id) {
-            return res.status(403).json({ message: 'Not authorized to pay for this order' });
+            return res.status(403).json({ success: false, message: 'Not authorized to pay for this order' });
         }
 
 
         const existingPayment = await Payment.findOne({ orderId });
 
         if (existingPayment) {
-            return res.status(400).json({ message: 'Payment alredy exists this order' })
+            return res.status(400).json({ success: false, message: 'Payment alredy exists this order' })
         }
 
 
@@ -34,7 +34,7 @@ exports.createPayment = async (req, res) => {
         const paymentMethod = method || order.paymentMethod;
 
         if (!["Card", "Upi", "Netbanking", "COD"].includes(paymentMethod)) {
-            return res.status(400).json({ message: 'Invalid payment method' });
+            return res.status(400).json({ success: false, message: 'Invalid payment method' });
         }
 
 
@@ -105,12 +105,12 @@ exports.createPayment = async (req, res) => {
 
         await order.save();
 
-        return res.status(200).json({ message: 'Payment success', payment, order });
+        return res.status(200).json({ success: true, message: 'Payment success', payment, order });
 
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to make payment', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to make payment', error: err.message });
 
     }
 }
@@ -127,11 +127,11 @@ exports.getAllPayments = async (req, res) => {
             })
             .sort('-createdAt');
 
-        return res.status(200).json({ message: 'All payments', payments });
+        return res.status(200).json({ success: true, message: 'All payments', payments });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch payments', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch payments', error: err.message });
 
     }
 }
@@ -145,11 +145,11 @@ exports.getMyPayments = async (req, res) => {
 
         const userPayments = payments.filter(payment => payment.orderId);
 
-        return res.status(200).json({ message: 'My payments', userPayments });
+        return res.status(200).json({ success: true, message: 'My payments', userPayments });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch my payments', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch my payments', error: err.message });
 
     }
 }
@@ -163,12 +163,12 @@ exports.updatePaymentStatus = async (req, res) => {
         const { status } = req.body;
 
         if (!["Success", "Pending", "Failed"].includes(status)) {
-            return res.status(400).json({ message: 'Invalid status' });
+            return res.status(400).json({ success: false, message: 'Invalid status' });
         }
 
         const payment = await Payment.findById(req.params.id).populate('orderId');
 
-        if (!payment) return res.status(404).json({ message: 'Payment not found' });
+        if (!payment) return res.status(404).json({ success: false, message: 'Payment not found' });
 
         payment.status = status;
 
@@ -183,11 +183,11 @@ exports.updatePaymentStatus = async (req, res) => {
 
         await payment.save();
 
-        return res.status(200).json({ message: 'Payment status updated', payment });
+        return res.status(200).json({ success: true, message: 'Payment status updated', payment });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to update payment', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to update payment', error: err.message });
 
     }
 }
@@ -199,14 +199,14 @@ exports.deletePayment = async (req, res) => {
 
         const payment = await Payment.findByIdAndDelete(req.params.id);
 
-        if (!payment) return res.status(404).json({ message: 'Payment not found' });
+        if (!payment) return res.status(404).json({ success: false, message: 'Payment not found' });
 
-        return res.status(200).json({ message: 'Payment deleted', payment });
+        return res.status(200).json({ success: true, message: 'Payment deleted', payment });
 
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed delete payment', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed delete payment', error: err.message });
 
     }
 

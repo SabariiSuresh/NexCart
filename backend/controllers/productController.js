@@ -2,7 +2,7 @@
 const Product = require('../models/product.model');
 const Category = require('../models/category.model');
 const Order = require('../models/order.model');
-
+const cloudinary = require('../config/cloudinary');
 
 const generateTags = (name, categoryName) => {
     const tagName = name.split(" ").map(tag => tag.toLowerCase());
@@ -19,7 +19,7 @@ exports.createProduct = async (req, res) => {
 
         if (!foundCategory) {
 
-            return res.status(400).json({ message: 'Invalid category id' });
+            return res.status(400).json({ success: false, message: 'Invalid category id' });
 
         }
 
@@ -29,7 +29,7 @@ exports.createProduct = async (req, res) => {
             try {
                 parsedFeature = typeof features === 'string' ? JSON.parse(features) : features;
             } catch (err) {
-                return res.status(400).json({ message: 'Invalid features format' });
+                return res.status(400).json({ success: false, message: 'Invalid features format' });
             }
         }
 
@@ -45,20 +45,20 @@ exports.createProduct = async (req, res) => {
 
         const makeTag = tags && tags.length > 0 ? tags : generateTags(name, foundCategory.name);
 
-        const images = req.files ? req.files.map(file => `/upload/products/${file.filename}`) : [];
+        const images = req.files ? req.files.map(file => file.path) : [];
 
         const product = new Product({ name, description, price: productPrice, images, stock, brand, rating, category: foundCategory._id, tags: makeTag, discount, salesCount, oldPrice: productOldPrice, features: parsedFeature });
 
         const newProduct = await product.save();
         await newProduct.populate('category', 'name type');
 
-        return res.status(201).json({ message: "Product create successfully", product: newProduct });
+        return res.status(201).json({ success: true, message: "Product create successfully", product: newProduct });
 
     } catch (err) {
 
         console.error(err)
 
-        return res.status(500).json({ message: 'Failed to create product', error: err.message })
+        return res.status(500).json({ success: false, message: 'Failed to create product', error: err.message })
 
     }
 
@@ -71,11 +71,11 @@ exports.getAllProducts = async (req, res) => {
 
         const products = await Product.find().populate('category', 'name type');
 
-        return res.status(200).json({ message: 'All products', products: products });
+        return res.status(200).json({ success: true, message: 'All products', products: products });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to get all product', error: err.message })
+        return res.status(500).json({ success: false, message: 'Failed to get all product', error: err.message })
 
     }
 
@@ -90,7 +90,7 @@ exports.getProductsById = async (req, res) => {
 
         if (!product) {
 
-            return res.status(404).json({ message: 'Product not found' });
+            return res.status(404).json({ success: false, message: 'Product not found' });
 
         }
 
@@ -98,13 +98,13 @@ exports.getProductsById = async (req, res) => {
         const recommended = await Product.find({ category: product.category._id, _id: { $ne: product._id } }).limit(8);
 
 
-        return res.status(200).json({ message: 'Product', product, recommended });
+        return res.status(200).json({ success: true, message: 'Product', product, recommended });
 
 
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to get product', error: err.message })
+        return res.status(500).json({ success: false, message: 'Failed to get product', error: err.message })
 
     }
 
@@ -133,13 +133,13 @@ exports.getProductsByCategory = async (req, res) => {
     try {
 
         const categoryId = req.params.id;
-        if (!categoryId) return res.status(400).json({ message: 'Category id is required' });
+        if (!categoryId) return res.status(400).json({ success: false, message: 'Category id is required' });
 
         const category = await Category.findById(categoryId);
 
         if (!category) {
 
-            return res.status(404).json({ message: 'Category not found' });
+            return res.status(404).json({ success: false, message: 'Category not found' });
 
         }
 
@@ -151,17 +151,17 @@ exports.getProductsByCategory = async (req, res) => {
 
         if (!products || products.length === 0) {
 
-            return res.status(404).json({ message: 'No products found such category' });
+            return res.status(404).json({ success: false, message: 'No products found such category' });
 
         } else {
 
-            return res.status(200).json({ message: 'Products in category', category: category.name, products });
+            return res.status(200).json({ success: true, message: 'Products in category', category: category.name, products });
 
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to get products by category', error: err.message })
+        return res.status(500).json({ success: false, message: 'Failed to get products by category', error: err.message })
 
     }
 
@@ -172,20 +172,21 @@ exports.updateProduct = async (req, res) => {
 
     try {
 
-        const { category } = req.body;
+        const { category, price, oldPrice, discount: fromBody } = req.body;
 
         if (category) {
 
             const findCategory = await Category.findById(category);
 
             if (!findCategory) {
-
-                return res.status(404).json({ message: 'Invalid category name ' })
-
+                return res.status(404).json({ success: false, message: 'Invalid category ID ' })
             }
-
             req.body.category = findCategory._id;
         }
+
+        const foundProduct = await Product.findById(req.params.id);
+        if (!foundProduct) return res.status(404).json({ success: false, message: 'Product not found' });
+
 
         if ((price || oldPrice) && (!fromBody || Number(fromBody) === 0)) {
             const newPrice = Number(price || foundProduct.price);
@@ -198,25 +199,45 @@ exports.updateProduct = async (req, res) => {
         }
 
 
-        const foundProduct = await Product.findById(req.params.id);
-        if (!foundProduct) return res.status(404).json({ message: 'Product not found' });
+        const newImages = req.files ? req.files.map(f => f.path) : [];
+        let existingImages = [];
 
-        const newImages = req.files.map(file => `/upload/products/${file.filename}`);
-        const existingImages = req.body.existingImages ? JSON.parse(req.body.existingImages) : foundProduct.images;
+        if (req.body.existingImages) {
+            try {
+                existingImages = JSON.parse(req.body.existingImages);
+            } catch {
+                existingImages = foundProduct.images;
+            }
+        } else {
+            existingImages = foundProduct.images;
+        }
+
+        const removedImages = foundProduct.images.filter(
+            img => !existingImages.includes(img)
+        );
+        for (const img of removedImages) {
+            try {
+                const publicId = img.split('/').slice(-2).join('/').split('.')[0];
+                await cloudinary.uploader.destroy(publicId);
+            } catch (err) {
+                console.error('Failed to delete old image:', err.message);
+            }
+        }
+
         const finalImages = [...existingImages, ...newImages];
+        req.body.images = finalImages;
+
 
         foundProduct.set({ ...req.body, images: finalImages });
         await foundProduct.save();
 
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('category', 'name')
+        const product = await foundProduct.populate('category', 'name')
 
-        if (!product) return res.status(404).json({ message: 'Product not found' });
-
-        res.status(201).json({ message: 'Product updated', product });
+        res.status(200).json({ success: true, message: 'Product updated', product });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to update product', error: err.message })
+        return res.status(500).json({ success: false, message: 'Failed to update product', error: err.message })
 
     }
 
@@ -229,11 +250,23 @@ exports.deleteProduct = async (req, res) => {
 
         const product = await Product.findByIdAndDelete(req.params.id);
 
-        return res.status(200).json({ message: 'Product deleted', product });
+        if (!product)
+            return res.status(404).json({ success: false, message: 'Product not found' });
+
+        for (const img of product.images) {
+            try {
+                const publicId = img.split('/').slice(-2).join('/').split('.')[0];
+                await cloudinary.uploader.destroy(publicId);
+            } catch (err) {
+                console.error('Failed to delete image:', err.message);
+            }
+        }
+
+        return res.status(200).json({ success: true, message: 'Product deleted', product });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to delete product', error: err.message })
+        return res.status(500).json({ success: false, message: 'Failed to delete product', error: err.message })
 
     }
 
@@ -299,11 +332,11 @@ exports.searchProduct = async (req, res) => {
         const total = await Product.countDocuments(filter);
         const products = await query.skip(skip).limit(Number(limit));
 
-        return res.status(200).json({ page: Number(page), totalPage: Math.ceil(total / limit), totalProducts: total, message: 'Search result', products });
+        return res.status(200).json({ page: Number(page), totalPage: Math.ceil(total / limit), totalProducts: total, message: 'Search result', products, success: true, });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'failed to search', error: err.message }),
+        return res.status(500).json({ success: false, message: 'failed to search', error: err.message }),
             console.error(err)
 
     }
@@ -332,7 +365,7 @@ exports.quickSearch = async (req, res) => {
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'failed to quick search', error: err.message }),
+        return res.status(500).json({ success: false, message: 'failed to quick search', error: err.message }),
             console.error(err)
     }
 }
@@ -384,11 +417,11 @@ exports.selections = async (req, res) => {
 
         ]);
 
-        return res.status(200).json({ topProducts, topElectronics, deals, topFashions, topToys, topSpeakers });
+        return res.status(200).json({ topProducts, topElectronics, deals, topFashions, topToys, topSpeakers, success: true, });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'failed to load selection', error: err.message }),
+        return res.status(500).json({ success: false, message: 'failed to load selection', error: err.message }),
             console.error(err)
 
     }
@@ -432,11 +465,11 @@ exports.recommended = async (req, res) => {
 
         const products = await Product.find({ category: { $in: cats }, stock: { $gt: 0 } }).sort({ salesCount: -1, createdAt: -1 }).limit(limit).populate('category', 'name');
 
-        return res.status(200).json({ products });
+        return res.status(200).json({ success: true, products });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'failed to load recommendation', error: err.message }),
+        return res.status(500).json({ success: false, message: 'failed to load recommendation', error: err.message }),
             console.error(err)
 
     }

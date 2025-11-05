@@ -9,13 +9,13 @@ exports.getMyProfile = async (req, res) => {
         const user = await User.findById(req.user.id).select('-password');
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         return res.status(200).json({ user })
 
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to fetch profile', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch profile', error: err.message });
     }
 }
 
@@ -27,7 +27,7 @@ exports.updateMyProfile = async (req, res) => {
         const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true }).select('-password');
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         user.name = req.body.name || user.name;
@@ -37,10 +37,10 @@ exports.updateMyProfile = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({ message: 'Profile updated', user })
+        return res.status(200).json({ success: true, message: 'Profile updated', user })
 
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to update profile', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to update profile', error: err.message });
     }
 }
 
@@ -53,13 +53,13 @@ exports.getAllUsers = async (req, res) => {
         const users = await User.find().select('-password');
 
         if (users.length === 0) {
-            return res.status(404).json({ message: 'No useres found' });
+            return res.status(404).json({ success: false, message: 'No useres found' });
         }
 
-        return res.status(200).json({ users })
+        return res.status(200).json({ success: true, users })
 
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to fetch users', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch users', error: err.message });
     }
 }
 
@@ -72,13 +72,13 @@ exports.getUserById = async (req, res) => {
         const user = await User.findById(req.params.id).select('-password');
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        return res.status(200).json({ user })
+        return res.status(200).json({ success: true, user })
 
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to fetch users', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch users', error: err.message });
     }
 }
 
@@ -90,7 +90,7 @@ exports.updateUser = async (req, res) => {
         const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true }).select('-password');
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         user.name = req.body.name || user.name;
@@ -99,10 +99,10 @@ exports.updateUser = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({ message: 'User updated', user })
+        return res.status(200).json({ success: true, message: 'User updated', user })
 
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to update user', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to update user', error: err.message });
     }
 }
 
@@ -115,12 +115,12 @@ exports.deleteUser = async (req, res) => {
         const user = await User.findByIdAndDelete(req.params.id)
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        return res.status(200).json({ message: 'User deleted' })
+        return res.status(200).json({ success: true, message: 'User deleted' })
 
     } catch (err) {
-        return res.status(500).json({ message: 'Failed to deleted user', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to deleted user', error: err.message });
     }
 }

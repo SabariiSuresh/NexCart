@@ -20,7 +20,7 @@ exports.addWishList = async (req, res) => {
 
         if (wishList.items.some(item => item.product.toString() === productId)) {
 
-            return res.status(400).json({ message: 'Product alraedy in wishlist ' });
+            return res.status(400).json({ success: false, message: 'Product alraedy in wishlist ' });
 
         } else {
 
@@ -28,13 +28,13 @@ exports.addWishList = async (req, res) => {
 
             await wishList.save();
 
-            return res.status(201).json({ message: 'Added to wishlist ', wishList });
+            return res.status(201).json({ success: true, message: 'Added to wishlist ', wishList });
 
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to add wishlist', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to add wishlist', error: err.message });
 
     }
 };
@@ -57,15 +57,15 @@ exports.getWishList = async (req, res) => {
 
         if (!wishList) {
 
-            return res.status(200).json({ message: 'Wishlist not found', wishList: { items: [] } });
+            return res.status(200).json({ success: false, message: 'Wishlist not found', wishList: { items: [] } });
 
         }
 
-        return res.status(200).json({ message: 'Your wishlist', wishList });
+        return res.status(200).json({ success: true, message: 'Your wishlist', wishList });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetech wishlist', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetech wishlist', error: err.message });
 
     }
 }
@@ -81,7 +81,7 @@ exports.removeWishlist = async (req, res) => {
 
         if (!wishList) {
 
-            return res.status(200).json({ message: 'Wishlist not found', wishList: { items: [] } });
+            return res.status(200).json({ success: false, message: 'Wishlist not found', wishList: { items: [] } });
 
         }
 
@@ -89,11 +89,11 @@ exports.removeWishlist = async (req, res) => {
 
         await wishList.save();
 
-        return res.status(200).json({ message: 'Wishlist removed' });
+        return res.status(200).json({ success: true, message: 'Wishlist removed' });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to remove wishlist', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to remove wishlist', error: err.message });
 
     }
 }

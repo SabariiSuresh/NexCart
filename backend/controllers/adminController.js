@@ -26,12 +26,12 @@ exports.dashboardStats = async (req, res) => {
 
         const revenueLastWeek = await Order.aggregate([
 
-            { $match: { isPaid: true , createdAt: { $gte: lastWeek } } },
+            { $match: { isPaid: true, createdAt: { $gte: lastWeek } } },
             {
                 $group: {
                     _id: { $dateToString: { format: "%d-%m-%Y", date: "$createdAt" } },
                     total: { $sum: "$totalPrice" },
-                    orders : { $sum : 1}
+                    orders: { $sum: 1 }
                 }
             },
             { $sort: { _id: 1 } }
@@ -78,7 +78,7 @@ exports.dashboardStats = async (req, res) => {
 
         const revenueTwoWeeks = await Order.aggregate([
 
-            { $match: { isPaid: true , createdAt: { $gte: lastTwoWeeks } } },
+            { $match: { isPaid: true, createdAt: { $gte: lastTwoWeeks } } },
             {
                 $group: {
                     _id: {
@@ -138,7 +138,7 @@ exports.dashboardStats = async (req, res) => {
             userCurr = userTwoWeeks[userTwoWeeks.length - 1].count || 0;
 
             userGrowth = userPrev > 0 ? ((userCurr - userPrev) / userPrev) * 100 : 100;
-            
+
         } else if (userTwoWeeks.length === 1) {
 
             userCurr = userTwoWeeks[0].count || 0;
@@ -167,7 +167,7 @@ exports.dashboardStats = async (req, res) => {
     } catch (err) {
 
         console.error(err)
-        return res.status(500).json({ message: 'Error to get dashboard stats', error: err.message });
- 
+        return res.status(500).json({ success: false, message: 'Error to get dashboard stats', error: err.message });
+
     }
 }

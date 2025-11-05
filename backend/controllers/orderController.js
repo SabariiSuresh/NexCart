@@ -44,7 +44,7 @@ exports.placeOrder = async (req, res) => {
         const { cartItems, shippingAddress, paymentMethod } = req.body;
 
         if (!cartItems || cartItems.length === 0) {
-            return res.status(400).json({ message: 'No order items' });
+            return res.status(400).json({ success: false, message: 'No order items' });
         }
 
         const orderItems = [];
@@ -54,11 +54,11 @@ exports.placeOrder = async (req, res) => {
             const prod = await Product.findById(ci.productId);
 
             if (!prod) {
-                return res.status(404).json({ message: 'Product not found' });
+                return res.status(404).json({ success: false, message: 'Product not found' });
             }
 
             if (prod.stock < ci.qty) {
-                return res.status(400).json({ message: `Insufficient stock for ${prod.name}` })
+                return res.status(400).json({ success: false, message: `Insufficient stock for ${prod.name}` })
             }
 
             orderItems.push({
@@ -89,11 +89,11 @@ exports.placeOrder = async (req, res) => {
         };
 
 
-        return res.status(201).json({ message: 'Order placed', order: order });
+        return res.status(201).json({ success: true, message: 'Order placed', order: order });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to place order', error: err.message }),
+        return res.status(500).json({ success: false, message: 'Failed to place order', error: err.message }),
             console.error("failed to place order", err);
 
     }
@@ -106,11 +106,11 @@ exports.getMyOrder = async (req, res) => {
 
         const orders = await Order.find({ user: req.user.id }).sort('-createdAt').populate('orderItems.product', 'name images price')
 
-        return res.status(200).json({ message: 'My orders', order: orders });
+        return res.status(200).json({ success: true, message: 'My orders', order: orders });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch orders', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch orders', error: err.message });
 
     }
 }
@@ -122,22 +122,22 @@ exports.getOrderById = async (req, res) => {
 
         const order = await Order.findById(req.params.id).populate('user', 'name email').populate('orderItems.product', 'images category');
 
-        if (!order) return res.status(404).json({ message: 'Order not found', order: order });
+        if (!order) return res.status(404).json({ success: false, message: 'Order not found', order: order });
 
 
         if (req.user.role !== 'admin' && order.user._id?.toString() !== req.user.id?.toString()) {
 
-            return res.status(403).json({ message: 'Not allowed' });
+            return res.status(403).json({ success: false, message: 'Not allowed' });
 
         } else {
 
-            return res.status(200).json({ message: 'Your order', order: order });
+            return res.status(200).json({ success: true, message: 'Your order', order: order });
 
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch your order', error: err.message }),
+        return res.status(500).json({ success: false, message: 'Failed to fetch your order', error: err.message }),
             console.error(err);
 
     }
@@ -152,12 +152,12 @@ exports.updateStatus = async (req, res) => {
 
         const order = await Order.findById(req.params.id);
 
-        if (!order) return res.status(404).json({ message: 'Order not found' });
+        if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
         const valid = ['Shipped', 'Delivered', 'Cancelled'];
 
         if (!valid.includes(status)) {
-            return res.status(400).json({ message: 'Invalid status' })
+            return res.status(400).json({ success: false, message: 'Invalid status' })
         }
 
         order.status = status;
@@ -177,11 +177,11 @@ exports.updateStatus = async (req, res) => {
 
         const orderUpdated = await order.save();
 
-        return res.status(201).json({ message: 'Status updated', order: orderUpdated })
+        return res.status(201).json({ success: true, message: 'Status updated', order: orderUpdated })
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to update status', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to update status', error: err.message });
 
     }
 }
@@ -193,18 +193,18 @@ exports.cancellOrder = async (req, res) => {
 
         const order = await Order.findById(req.params.id);
 
-        if (!order) return res.status(404).json({ message: 'Order not found' });
+        if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
         if (req.user.role !== 'admin' && order.user._id.toString() !== req.user.id.toString()) {
 
-            return res.status(403).json({ message: 'Not allowed' });
+            return res.status(403).json({ success: false, message: 'Not allowed' });
 
         }
 
 
         if (['Shipped', 'Delivered'].includes(order.status)) {
 
-            return res.status(400).json({ message: 'Canot cancel shipped/delivered order', order: order });
+            return res.status(400).json({ success: false, message: 'Canot cancel shipped/delivered order', order: order });
 
         }
 
@@ -218,11 +218,11 @@ exports.cancellOrder = async (req, res) => {
 
         const orderCancel = await order.save();
 
-        return res.status(200).json({ message: 'Order calcelled', order: orderCancel });
+        return res.status(200).json({ success: true, message: 'Order calcelled', order: orderCancel });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to cancel order', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to cancel order', error: err.message });
 
     }
 }
@@ -235,19 +235,19 @@ exports.deleteOrder = async (req, res) => {
 
         const order = await Order.findById(req.params.id);
 
-        if (!order) return res.status(404).json({ message: 'Order not found' });
+        if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
 
         if (req.user.role !== 'admin') {
-            return res.status(403).json({ message: 'Only admin can delete orders' });
+            return res.status(403).json({ success: false, message: 'Only admin can delete orders' });
         }
 
         const deletedOrder = await Order.findByIdAndDelete(req.params.id);
 
-        return res.status(200).json({ message: 'Order deleted successfully', order: deletedOrder });
+        return res.status(200).json({ success: true, message: 'Order deleted successfully', order: deletedOrder });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to delete order', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to delete order', error: err.message });
 
     }
 }
@@ -262,7 +262,7 @@ exports.updaterOrderToDelivered = async (req, res) => {
 
         if (!order) {
 
-            return res.status(404).json({ message: 'Order not found' });
+            return res.status(404).json({ success: false, message: 'Order not found' });
 
         } else {
 
@@ -272,13 +272,13 @@ exports.updaterOrderToDelivered = async (req, res) => {
 
             const updateOrder = await order.save();
 
-            return res.status(200).json({ message: 'Order updated to delivered', order: updateOrder });
+            return res.status(200).json({ success: true, message: 'Order updated to delivered', order: updateOrder });
 
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to update', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to update', error: err.message });
 
     }
 
@@ -291,11 +291,11 @@ exports.getAllOrders = async (req, res) => {
 
         const orders = await Order.find().populate('user', 'name email').sort('-createdAt');
 
-        return res.status(200).json({ message: 'All orders', order: orders });
+        return res.status(200).json({ success: true, message: 'All orders', order: orders });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch order', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch order', error: err.message });
 
     }
 
@@ -308,7 +308,7 @@ exports.getTopProducts = async (req, res) => {
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch order', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch order', error: err.message });
 
     }
 }
@@ -327,6 +327,6 @@ exports.getLastAddress = async (req, res) => {
         return res.json({ shippingAddress: lastOrder.shippingAddress });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ message: 'Failed to fetch last address', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch last address', error: err.message });
     }
 };

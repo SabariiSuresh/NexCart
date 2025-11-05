@@ -27,11 +27,11 @@ exports.addToCart = async (req, res) => {
 
         const addCart = await cart.save();
 
-        return res.status(200).json({ message: 'Product added to cart', cart: addCart });
+        return res.status(200).json({ success: true, message: 'Product added to cart', cart: addCart });
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to add cart', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to add cart', error: err.message });
 
     }
 
@@ -48,17 +48,17 @@ exports.getCart = async (req, res) => {
 
         if (!cart) {
 
-            return res.status(401).json({ items: [], message: "Cart is empty" });
+            return res.status(401).json({ success: true, items: [], message: "Cart is empty" });
 
         } else {
 
-            return res.status(200).json({ message: "Your cart", cart: cart });
+            return res.status(200).json({ success: true, message: "Your cart", cart: cart });
 
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to fetch cart', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to fetch cart', error: err.message });
 
     }
 }
@@ -76,7 +76,7 @@ exports.removeItemFromCart = async (req, res) => {
 
         if (!cart) {
 
-            return res.status(404).json({ message: 'cart not found' });
+            return res.status(404).json({ success: false, message: 'cart not found' });
 
         } else {
 
@@ -84,12 +84,12 @@ exports.removeItemFromCart = async (req, res) => {
 
             const removeCart = await cart.save();
 
-            return res.status(200).json({ message: 'item removed from cart', cart: removeCart });
+            return res.status(200).json({ success: true, message: 'item removed from cart', cart: removeCart });
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to remove item from cart', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to remove item from cart', error: err.message });
 
     }
 
@@ -104,19 +104,19 @@ exports.clearCart = async (req, res) => {
 
         if (!cart) {
 
-            return res.status(404).json({ message: "Cart not fount to clear" });
+            return res.status(404).json({ success: false, message: "Cart not fount to clear" });
 
         } else {
 
             cart.items = [];
             const clearCart = await cart.save();
-            return res.status(200).json({ message: 'Cart cleared', cart: clearCart });
+            return res.status(200).json({ success: true, message: 'Cart cleared', cart: clearCart });
 
         }
 
     } catch (err) {
 
-        return res.status(500).json({ message: 'Failed to clear cart', error: err.message });
+        return res.status(500).json({ success: false, message: 'Failed to clear cart', error: err.message });
 
     }
 
