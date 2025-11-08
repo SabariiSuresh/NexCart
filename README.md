@@ -11,18 +11,17 @@ management, cart system, orders, payments, and a modern responsive UI.
 -   User Registration & Login
 -   Admin Login
 -   JWT-based middleware
--   Role-based API access
--   
+-   Role-based API access  
 
 # 👤 User Features
 
--   Browse products\
--   Search, filter, and category-wise browsing\
--   Add to cart (login required)\
+-   Browse products
+-   Search, filter, and category-wise browsing
+-   Add to cart (login required)
 -   Add to wishlist(login required)
--   Update/remove cart items (login required)\
--   Checkout (login required)\
--   View order history(login required)\
+-   Update/remove cart items (login required)
+-   Checkout (login required)
+-   View order history(login required)
 -   Responsive UI for mobile & desktop
 -   
 
@@ -30,57 +29,56 @@ management, cart system, orders, payments, and a modern responsive UI.
 
 ### ✅ **1. Manage Users**
 
--   View all registered users\
--   Delete users\
--   
+-   View all registered users
+-   Delete users  
 
 ### ✅ **2. Manage Products**
 
--   Add new products\
--   Update product details\
--   Delete products\
--   Manage product images (Cloudinary)\
--   Control stock quantity\
--   Assign categories\
+-   Add new products
+-   Update product details
+-   Delete products
+-   Manage product images (Cloudinary)
+-   Control stock quantity
+-   Assign categories
 -   Auto-generate product tags
 
 ### ✅ **3. Manage Categories**
 
--   Add category\
--   Edit category\
--   Delete category\
--   Parent--child categories\
--   Category image upload\
+-   Add category
+-   Edit category
+-   Delete category
+-   Parent--child categories
+-   Category image upload
 -   Category tree view
 
 ### ✅ **4. Manage Orders**
 
--   View all orders\
--   Update order statuses\
+-   View all orders
+-   Update order statuses
 -   View order items, amounts, and payment details
 
 ### ✅ **5. Manage Payments**
 
--   View all payments\
--   Check payment method (COD / Online)\
--   Payment statuses\
--   Track total revenue\
+-   View all payments
+-   Check payment method (COD / Online)
+-   Payment statuses
+-   Track total revenue
 -   Handle failed or pending transactions
    
 
 #  Frontend (Angular 20)
 
--   Tailwind CSS\
--   PrimeNG\
--   Responsive product cards\
--   Search & filter\
+-   Tailwind CSS
+-   PrimeNG
+-   Responsive product cards
+-   Search & filter
 -   Category menu
 
 #  Backend (Node.js + Express)
 
--   RESTful APIs\
--   MongoDB + Mongoose\
--   JWT authentication\
+-   RESTful APIs
+-   MongoDB + Mongoose
+-   JWT authentication
 -   Cloudinary uploads
 
 Environment variables:
