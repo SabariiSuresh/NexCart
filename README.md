@@ -1,46 +1,10 @@
 # 🛒 MEAN Stack eCommerce Website
 
 A full-featured eCommerce platform built using **MongoDB, Express.js,
-Angular, and Node.js**, with Cloudinary image upload, category
-management, product listings, cart system, order management, and modern
-responsive UI.
+Angular, and Node.js**, with Cloudinary image upload, category/product
+management, cart system, orders, payments, and a modern responsive UI.
 
 ## ✅ Features
-
-### 🗂 Categories
-
--   Add, edit, delete categories
--   Nested parent--child category structure
--   Category images via Cloudinary
--   Category tree view (PrimeNG)
-
-### 🛍 Products
-
--   Add products with:
-    -   Name
-    -   Description
-    -   Price
-    -   Stock
-    -   Category selection
-    -   Multiple images
--   Auto-generate tags from product name
--   Search, filter, sort, and pagination
--   User-friendly product cards UI (Tailwind + Angular)
-
-### 🛒 Cart & Checkout
-
--   Add to cart
--   Update quantity
--   Remove from cart
--   Cart total calculation
--   Checkout with login redirection
--   Order creation with all details
-
-### 📦 Orders
-
-**User** - View order history
-
-**Admin** - Manage all orders - Update order status
 
 ### 👤 Authentication
 
@@ -48,35 +12,76 @@ responsive UI.
 -   Admin Login
 -   JWT-based middleware
 -   Role-based API access
+-   
 
-###  Frontend (Angular 20)
+# 👤 User Features
 
--   Tailwind CSS styling
--   PrimeNG components
--   Responsive layout
--   Modern UI
--   Category-based browsing
--   Search results page
--   Wishlist counter
--   Improved order detail UI
+-   Browse products\
+-   Search, filter, and category-wise browsing\
+-   Add to cart (login required)\
+-   Add to wishlist(login required)
+-   Update/remove cart items (login required)\
+-   Checkout (login required)\
+-   View order history(login required)\
+-   Responsive UI for mobile & desktop
+-   
 
-###  Backend (Node.js + Express)
+# 🛠️ Admin Features
 
--   RESTful API architecture
--   MongoDB + Mongoose
--   Cloudinary image upload
--   Secure JWT authentication
--   Validation & error handling
--   Clean controllers/services structure
+### ✅ **1. Manage Users**
 
-## ☁ Deployment
+-   View all registered users\
+-   Delete users\
+-   
 
-### ✅ Frontend → Netlify
+### ✅ **2. Manage Products**
 
--   Angular build optimized
--   Environment variables configured
+-   Add new products\
+-   Update product details\
+-   Delete products\
+-   Manage product images (Cloudinary)\
+-   Control stock quantity\
+-   Assign categories\
+-   Auto-generate product tags
 
-### ✅ Backend → Render
+### ✅ **3. Manage Categories**
+
+-   Add category\
+-   Edit category\
+-   Delete category\
+-   Parent--child categories\
+-   Category image upload\
+-   Category tree view
+
+### ✅ **4. Manage Orders**
+
+-   View all orders\
+-   Update order statuses\
+-   View order items, amounts, and payment details
+
+### ✅ **5. Manage Payments**
+
+-   View all payments\
+-   Check payment method (COD / Online)\
+-   Payment statuses\
+-   Track total revenue\
+-   Handle failed or pending transactions
+   
+
+#  Frontend (Angular 20)
+
+-   Tailwind CSS\
+-   PrimeNG\
+-   Responsive product cards\
+-   Search & filter\
+-   Category menu
+
+#  Backend (Node.js + Express)
+
+-   RESTful APIs\
+-   MongoDB + Mongoose\
+-   JWT authentication\
+-   Cloudinary uploads
 
 Environment variables:
 
