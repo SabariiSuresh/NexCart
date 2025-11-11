@@ -13,9 +13,68 @@ body {
 
 body {
   margin: 0;
-  background-color:white;
+  background-color: white;
 }
 
 ::-webkit-scrollbar {
   width: 0px;
+}
+
+
+.premium-toast {
+  border-radius: 18px !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  background: rgba(15, 23, 42, 0.55) !important;
+  font-size: 15px !important;
+  letter-spacing: .3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-toast::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(to bottom,
+      #60a5fa,
+      #a78bfa,
+      #f472b6);
+  opacity: .85;
+}
+
+.premium-toast-in {
+  animation: premiumSlideIn .35s ease both;
+}
+
+.premium-toast-out {
+  animation: premiumSlideOut .25s ease both;
+}
+
+@keyframes premiumSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes premiumSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(.96);
+  }
 }
