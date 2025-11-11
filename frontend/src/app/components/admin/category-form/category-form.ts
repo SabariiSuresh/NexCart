@@ -57,6 +57,7 @@ export class CategoryForm implements OnInit, OnChanges {
 
     this.categoryservice.getCategories().subscribe(res => {
       this.treeCategories = this.buildTree(res.categories);
+      console.log(this.treeCategories);
 
     });
 
