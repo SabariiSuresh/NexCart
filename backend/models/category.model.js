@@ -7,7 +7,7 @@ const categorySchema = new mongoose.Schema(
         parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
         description: { type: String },
         type: { type: String },
-        image: { type: String, required: true }
+        image: { type: String, default: '' }
     },
     { timestamps: true }
 );

@@ -2,7 +2,7 @@
   <div class="grid gap-4">
 
     <input pInputText placeholder="Category Name" formControlName="name" />
-    <p-treeSelect [options]="treeCategories || []" optionValue="key" [filter]="true" appendTo="body"
+    <p-treeSelect [options]="treeCategories || []" optionValue="key" optionLabel="label" [filter]="true" appendTo="body"
       placeholder="Parent Category" formControlName="parent"></p-treeSelect>
     <input pInputText placeholder="Category Type" formControlName="type" />
     <input pInputText placeholder="Description" formControlName="description" />

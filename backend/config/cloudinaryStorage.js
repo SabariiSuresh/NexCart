@@ -19,8 +19,21 @@ const productStorage = new CloudinaryStorage({
     }
 });
 
-const categoryUpload = multer({ storage: categoryStorage });
-const productUpload = multer({ storage: productStorage });
+const categoryUpload = multer({
+    storage: categoryStorage,
+    fileFilter: (req, file, cb) => {
+        if (!file) cb(null, false)
+        else cb(null, true)
+    }
+});
+
+const productUpload = multer({
+    storage: productStorage,
+    fileFilter: (req, file, cb) => {
+        if (!file) cb(null, false)
+        else cb(null, true)
+    }
+});
 
 
 module.exports = { categoryUpload, productUpload }

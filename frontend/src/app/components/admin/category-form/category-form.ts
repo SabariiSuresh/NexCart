@@ -73,21 +73,38 @@ export class CategoryForm implements OnInit, OnChanges {
     }));
   }
 
+
   submitForm() {
+
+    const payload = { ...this.categoryForm.value };
+
+    if (payload.parent) {
+      if (typeof payload.parent === "object") {
+        payload.parent = payload.parent.key || payload.parent._id || null;
+      } else {
+        payload.parent = String(payload.parent);
+      }
+    } else {
+      payload.parent = null;
+    }
+
     const formValue = new FormData();
 
-    Object.entries(this.categoryForm.value).forEach(([key, value]) => {
-      formValue.append(key, value as string);
+    Object.entries(payload).forEach(([key, value]) => {
+      formValue.append(key, value !== null && value !== undefined ? String(value) : "");
     });
+
 
     if (this.selectedFile !== null) {
       formValue.append('image', this.selectedFile);
     }
 
-    if (this.category && formValue.get('parent') === this.category._id) {
+
+    if (this.category && payload.parent === this.category._id) {
       this.notify.error('Cannot set category as its own parent');
       return;
     }
+
 
     if (this.category) {
       this.categoryservice.updateCategory(this.category._id, formValue).subscribe({
@@ -101,7 +118,9 @@ export class CategoryForm implements OnInit, OnChanges {
           console.error('Update error', err);
         }
       });
+
     } else {
+
       this.categoryservice.createCategory(formValue).subscribe({
         next: () => {
           this.notify.success('Category added');

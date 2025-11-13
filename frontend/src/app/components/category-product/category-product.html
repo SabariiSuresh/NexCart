@@ -5,6 +5,10 @@
   <div class="flex-1">
 
     <div *ngIf="paginatedProducts.length === 0" class="text-center py-10 text-gray-500 text-2xl  font-medium">
+      No products found this category
+    </div>
+
+    <div *ngIf="categoryName.length > 0" class="text-center py-10 text-gray-500 text-2xl  font-medium">
       No products match the selected filters
     </div>
 

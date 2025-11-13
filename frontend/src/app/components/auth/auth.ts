@@ -9,7 +9,7 @@ import { NotificationService } from '../../services/notification/notification-se
   selector: 'app-auth',
   standalone: false,
   templateUrl: './auth.html',
-  styleUrl: './auth.css'
+  styleUrl: './auth.css',
 })
 export class Auth implements OnInit {
 
