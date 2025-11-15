@@ -15,6 +15,7 @@ const productStorage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'nexcart/products',
+        resource_type: 'image',
         allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
     }
 });

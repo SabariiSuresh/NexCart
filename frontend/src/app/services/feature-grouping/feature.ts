@@ -14,7 +14,7 @@ export class Feature {
       Brand: ['brand', 'designer'],
       Others: []
     },
-    'mens footware': {
+    'mens footwar': {
       Size: ['size', 'fit'],
       Material: ['material', 'leather', 'synthetic'],
       Color: ['color', 'pattern'],
@@ -28,74 +28,87 @@ export class Feature {
       Brand: ['brand', 'designer'],
       Others: []
     },
-    'womens footware': {
+    'womens footwar': {
       Size: ['size', 'fit'],
       Material: ['material', 'leather', 'synthetic'],
       Color: ['color', 'pattern'],
       Brand: ['brand', 'designer'],
       Others: []
     },
-    footware: {
+    footwars: {
       Size: ['size', 'fit'],
       Material: ['material', 'leather', 'synthetic'],
       Color: ['color', 'pattern'],
       Brand: ['brand', 'designer'],
       Others: []
     },
-    furniture: {
+    furnitures: {
       Material: ['wood', 'metal', 'glass'],
       Dimensions: ['width', 'height', 'depth'],
       Weight: ['weight'],
       Color: ['color', 'finish'],
       Others: []
     },
-    mobile: {
+    mobiles: {
       Display: ['screen', 'resolution', 'size'],
       Platform: ['os', 'chipset', 'cpu', 'gpu'],
-      Battery: ['battery', 'capacity', 'charging'],
-      Connectivity: ['bluetooth', 'wifi', 'nfc'],
-      Sound: ['speaker', '3.5mm jack'],
-      Camera: ['camera', 'main', 'selfie'],
-      Memory: ['ram', 'internal', 'card slot'],
+      Battery: ['capacity', 'charging speed', 'charging type'],
+      Connectivity: ['bluetooth', 'wifi', 'nfc', '5g'],
+      Sound: ['speaker type', 'dolby', '3.5mm jack'],
+      'Main Camera': ['camera type', 'wide', 'ultrawide', 'telephoto', 'periscope', 'ois', '8k video', '4k video', '1080p video'],
+      'Selfie Camera': ['selfie wide', 'selfie video', 'hdr selfie'],
+      Memory: ['ram', 'internal', 'expandable storage'],
+      Sensors: ['fingerprint', 'accelerometer', 'gyro', 'proximity', 'compass', 'barometer'],
+      Build: ['weight', 'dimensions', 'material'],
       Others: []
     },
-    speaker: {
+    speakers: {
       Power: ['power', 'wattage'],
       Connectivity: ['connectivity', 'bluetooth', 'wifi', 'aux', 'usb'],
       Sound: ['frequencyResponse', 'bass', 'treble'],
-      Battery: ['battery', 'capacity', 'charging'],
+      Battery: ['capacity', 'charging', 'playback time'],
       Color: ['color', 'finish'],
+      Features: ['water resistance', 'smart assistant support'],
       Others: []
     },
-    jewellery: {
+    jewellerys: {
       Material: ['material', 'metal', 'alloy', 'gold', 'silver'],
       Gemstone: ['gemstone', 'diamond', 'ruby', 'sapphire'],
       Weight: ['weight', 'carat'],
       Size: ['size', 'ring size', 'length'],
       Design: ['design', 'pattern', 'style'],
+      Certification: ['BIS hallmarked', 'IGI certified'],
       Others: []
     },
-    watch: {
-      Material: ['material', 'strap', 'case'],
-      Color: ['color', 'dial color', 'strap color'],
-      Dial: ['dialShape', 'shape', 'size'],
-      Features: ['water resistance', 'style', 'chronograph', 'complications'],
+    watches: {
+      Material: ['case material', 'strap material'],
+      Color: ['dial color', 'strap color'],
+      Dial: ['shape', 'size'],
+      Features: ['water resistance', 'chronograph', 'complications'],
       Others: []
     },
-    
+    grocerys: {
+      Quantity: ['weight', 'volume'],
+      ShelfLife: ['expiry date', 'best before'],
+      Ingredients: ['ingredients'],
+      Diet: ['vegan', 'gluten-free', 'organic'],
+      Others: []
+    }
+
+
   };
 
   private categoryFeatureMap: Record<string, string[]> = {
-    mobile: ['ram', 'internal', 'card sloat', 'os', 'chipset', 'cpu', 'gpu', 'screen', 'resolution', 'size', 'camera', 'main', 'selfie', 'speaker', '3.5mm jack', 'bluetooth', 'wifi', 'nfc', 'battery', 'capacity', 'charging'],
-    speaker: ['power', 'wattage', 'connectivity', 'frequencyResponse', 'bass', 'treble', 'bluetooth', 'wifi', 'aux', 'usb', 'capacity', 'charging', 'battery', 'color', 'finish'],
-    furniture: ['wood', 'metal', 'glass', 'width', 'height', 'depth', 'weight', 'color', 'finish'],
-    'mens clothing': ['size', 'color', 'material', 'brand'],
-    'mens footware': ['size', 'color', 'material', 'brand'],
-    'womens clothing': ['size', 'color', 'material', 'brand'],
-    'womens footware': ['size', 'color', 'material', 'brand'],
-    jewellery: ['material', 'metal', 'alloy', 'gold', 'silver', 'gemstone', 'diamond', 'ruby', 'sapphire', 'weight', 'carat', 'size', 'ring size', 'length', 'design', 'pattern', 'style'],
-    watch: ['strap', 'case','dial color', 'strap color', 'shape', 'size', 'water resistance', 'style', 'chronograph', 'complications'],
-    grocery: ['weight', 'expiryDate', 'brand', 'ingredients']
+    mobiles: ['ram', 'internal', 'expandable storage', 'os', 'chipset', 'cpu', 'gpu', 'screen', 'resolution', 'size', 'camera type', 'wide', 'ultrawide', 'telephoto', 'periscope', 'ois', '8k video', '4k video', '1080p video', 'selfie wide', 'selfie video', 'hdr selfie', 'capacity', 'charging speed', 'charging type', 'speaker type', 'dolby', '3.5mm jack', 'fingerprint', 'accelerometer', 'gyro', 'proximity', 'compass', 'barometer', 'bluetooth', 'wifi', 'nfc', '5g', 'weight', 'dimensions', 'material'],
+    speakers: ['power', 'wattage', 'connectivity', 'frequencyResponse', 'bass', 'treble', 'bluetooth', 'wifi', 'aux', 'usb', 'capacity', 'charging', 'battery', 'color', 'finish', 'water resistance', 'smart assistant support'],
+    furnitures: ['wood', 'metal', 'glass', 'width', 'height', 'depth', 'weight', 'color', 'finish'],
+    'mens clothing': ['size', 'fit', 'length', 'material', 'fabric', 'cotton', 'wool', 'color', 'pattern', 'print', 'brand', 'designer'],
+    'mens footware': ['size', 'fit', 'material', 'leather', 'synthetic', 'color', 'pattern', 'brand', 'designer'],
+    'womens clothing': ['size', 'fit', 'length', 'material', 'fabric', 'cotton', 'wool', 'color', 'pattern', 'print', 'brand', 'designer'],
+    'womens footware': ['size', 'fit', 'material', 'leather', 'synthetic', 'color', 'pattern', 'brand', 'designer'],
+    jewellerys: ['material', 'metal', 'alloy', 'gold', 'silver', 'gemstone', 'diamond', 'ruby', 'sapphire', 'weight', 'carat', 'size', 'ring size', 'length', 'design', 'pattern', 'style', 'BIS hallmarked', 'IGI certified'],
+    watchs: ['case material', 'strap material', 'dial color', 'strap color', 'shape', 'size', 'water resistance', 'style', 'chronograph', 'complications'],
+    grocerys: ['weight', 'volume', 'expiry date', 'best before', 'ingredients', 'vegan', 'gluten-free', 'organic']
   };
 
   groupFeatures(categoryType: string, features: Record<string, any>) {

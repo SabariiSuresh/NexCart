@@ -128,6 +128,8 @@ export class ProductList implements OnInit {
         } else {
           this.notify.success(`${this.filteredProducts.length} products found`);
         }
+
+        console.log(this.selectedCategory,this.selectedProduct)
       },
       error: err => {
         if (err.status == 404) {

@@ -98,9 +98,8 @@ export class Home implements OnInit {
     this.router.navigate(['/category', categoryId]);
   }
 
-  viewProduct(productId: string) {
-    this.router.navigate(['/products', productId]);
-    console.log('click', productId)
+  viewCategoryProduct(categoryId: string) {
+    this.router.navigate(['/category', categoryId]);
   }
 
   navigateSections(key: string) {

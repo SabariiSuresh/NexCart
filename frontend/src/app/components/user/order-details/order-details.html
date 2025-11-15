@@ -20,7 +20,7 @@
                     <div class="flex items-center gap-4 flex-1">
                         <div
                             class="w-16 h-16 sm:w-30 sm:h-30 rounded-xl flex items-center justify-center overflow-hidden hover:scale-105 transform duration-300">
-                            <img [src]="'http://localhost:3000' + item.product.images[0]" [alt]="item.product.name"
+                            <img [src]="item.product.images[0].startsWith('http') ? item.product.images[0] :'http://localhost:3000' + item.item.product.images[0]" [alt]="item.product.name"
                                 class="object-cover w-full h-full" />
                         </div>
                         <div>

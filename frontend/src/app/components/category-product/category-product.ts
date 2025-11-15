@@ -52,7 +52,8 @@ export class CategoryProduct implements OnInit {
         this.applyFilters();
       },
       error: err => console.error(err)
-    })
+    });
+    
   }
 
 

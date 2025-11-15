@@ -5,12 +5,9 @@
   <div class="flex-1">
 
     <div *ngIf="paginatedProducts.length === 0" class="text-center py-10 text-gray-500 text-2xl  font-medium">
-      No products found this category
-    </div>
-
-    <div *ngIf="categoryName.length > 0" class="text-center py-10 text-gray-500 text-2xl  font-medium">
       No products match the selected filters
     </div>
+
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div *ngFor="let product of paginatedProducts"
@@ -18,7 +15,7 @@
 
         <div
           class="relative group w-full sm:h-60 md:h-72 lg:h-70 aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-t-xl">
-          <img [src]="'http://localhost:3000' + product.images[0]" alt="{{ product.name }}"
+          <img [src]="product.images[0].startsWith('http') ? product.images[0] :'http://localhost:3000' + product.images[0]" alt="{{ product.name }}"
             class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105" />
           <span *ngIf="product.discount > 0"
             class="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
