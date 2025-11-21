@@ -1,10 +1,11 @@
 <nav
-    class="bg-gradient-to-r from-teal-500 via-teal-100 to-white shadow-md px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-50">
+    class="bg-gradient-to-r from-teal-500 via-cyan-50 to-white shadow-md px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-50">
 
-    <div class="text-3xl md:text-4xl font-serif text-slate-800 hover:text-slate-900 transition-transform hover:scale-105 duration-500 font-bold cursor-pointer pr-3 flex items-center gap-2"
-        (click)="home()">
+    <div class="pr-3 flex items-center gap-3" (click)="home()">
         <i class="pi pi-shopping-bag !text-2xl"></i>
-        NexCart
+        <h3
+            class="text-3xl md:text-4xl font-serif text-slate-800 hover:text-slate-900 transition-transform hover:scale-105 duration-500 font-bold cursor-pointer">
+            NexCart</h3>
     </div>
 
 
@@ -144,7 +145,6 @@
 
 
 <p-scrolltop
-  styleClass="fixed bottom-6 right-6 bg-teal-500 hover:bg-teal-600 text-white rounded-full shadow-lg p-3 transition-all duration-300 z-[9999]"
-  [threshold]="400"
-  [behavior]="'smooth'">
+    styleClass="fixed bottom-6 right-6 bg-teal-500 hover:bg-teal-600 text-white rounded-full shadow-lg p-3 transition-all duration-300 z-[9999]"
+    [threshold]="400" [behavior]="'smooth'">
 </p-scrolltop>

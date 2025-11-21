@@ -37,15 +37,14 @@ export class Navbar implements OnInit {
       this.userName = name;
       if (this.isLoggedIn && name) {
         this.menuList();
+        this.loadUserData();
       }
     });
 
-    this.cartService.getCart().subscribe();
     this.cartService.cartCount$.subscribe(count => {
       this.cartCount = count;
     })
 
-    this.wishlistService.getWishlist().subscribe();
     this.wishlistService.wishlistCount$.subscribe(count => {
       this.wishlistcount = count
     })
@@ -120,6 +119,16 @@ export class Navbar implements OnInit {
         command: () => this.logOut()
       }
     ];
+
+  }
+
+
+  private loadUserData() {
+
+    if (!this.isLoggedIn) return;
+
+    this.cartService.getCart().subscribe({ error: () => this.cartCount = 0 })
+    this.wishlistService.getWishlist().subscribe({ error: () => this.wishlistcount = 0 })
 
   }
 
@@ -230,6 +239,8 @@ export class Navbar implements OnInit {
 
     setTimeout(() => {
       this.authservice.logOut();
+      this.cartCount = 0;
+      this.wishlistcount = 0;
     }, 1000)
     this.notify.success('You successfully logged outed');
 

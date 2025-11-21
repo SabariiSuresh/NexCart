@@ -26,6 +26,10 @@ export class CategoryService {
     return this.http.get(`${this.categoryUrl}/public`, this.getAuthHeaders());
   }
 
+  getProductsFromParentcat(id: string): Observable<any> {
+    return this.http.get(`${this.categoryUrl}/${id}/products`, this.getAuthHeaders());
+  }
+
   getCategories(): Observable<any> {
     return this.http.get(`${this.categoryUrl}/nested`, this.getAuthHeaders());
   }

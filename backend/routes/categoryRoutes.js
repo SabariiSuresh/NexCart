@@ -7,6 +7,7 @@ const categoryController = require('../controllers/categoryController');
 const { categoryUpload } = require('../config/cloudinaryStorage');
 
 router.get('/public', categoryController.getCategoriesPublic);
+router.get('/:id/products', categoryController.getProductsFromParentCat);
 router.post('/', protect, adminOnly, categoryUpload.single('image'), categoryController.createCategory);
 router.get('/nested', protect, adminOnly, categoryController.getCategories);
 router.get('/:id', protect, adminOnly, categoryController.getCategoryById);

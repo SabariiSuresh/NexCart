@@ -1,8 +1,8 @@
 <p-toast></p-toast>
 
-<p-dialog [(visible)]="showDialog" [modal]="true" [closable]="true" [dismissableMask]="true" [draggable]="false"
-  [resizable]="false" [style]="{width: '450px'}" [breakpoints]="{'640px': '90vw', '768px': '70vw', '1024px': '90vw'}"
-  appendTo="body">
+<p-dialog [(visible)]="showDialog" [modal]="true" [closable]="true" [dismissableMask]="true" [draggable]="true"
+  [autofocus]="false" [resizable]="false" [style]="{width: '470px'}"
+  [breakpoints]="{'640px': '90vw', '768px': '70vw', '1024px': '90vw'}" appendTo="body">
 
 
   <ng-template pTemplate="header">
@@ -31,7 +31,7 @@
             *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')">
             <p class="text-red-400 m-2">Email is required</p>
           </small>
-          <small class="p-error" *ngIf="loginForm.get('email')?.hasError('email')">
+          <small class="p-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('pattern')">
             <p class="text-red-400 m-2">Invalid email format</p>
           </small>
         </div>
@@ -47,7 +47,7 @@
           </small>
         </div>
 
-        <button pButton type="submit" label="Login" icon="pi pi-sign-in"
+        <button pButton type="submit" label="Login" icon="pi pi-shield"
           class="w-full p-button-rounded p-button-raised p-button-contrast" [disabled]="loginForm.invalid"></button>
       </form>
     </div>
@@ -63,7 +63,8 @@
             *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.hasError('required')">
             <p class="text-red-400 m-2">Name is required</p>
           </small>
-          <small class="p-error" *ngIf="registerForm.get('name')?.hasError('minlength')">
+          <small class="p-error"
+            *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.hasError('minlength')">
             <p class="text-red-400 m-2">Name should be 4 characters</p>
           </small>
         </div>
@@ -75,7 +76,8 @@
             *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')">
             <p class="text-red-400 m-2">Email is required</p>
           </small>
-          <small class="p-error" *ngIf="registerForm.get('email')?.hasError('pattern')">
+          <small class="p-error"
+            *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('pattern')">
             <p class="text-red-400 m-2">Invalid email format</p>
           </small>
         </div>

@@ -32,9 +32,8 @@ export class Cart implements OnInit {
       next: (res) => {
 
         this.cartItems = res.cart?.items || [];
-
-        console.log(this.cartItems)
         this.setPaginatedProducts()
+
       },
       error: err => {
         console.error(err);

@@ -22,18 +22,18 @@ export class AuthInterceptor implements HttpInterceptor {
     private auth: AuthService,
     private loader: LoaderService,
     private notify: NotificationService
-  ) {}
+  ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     const shouldShowLoader = !this.excludedUrls.some(url => req.url.includes(url));
+    const token = this.auth.getToken?.();
 
     if (shouldShowLoader) {
       this.activeRequests++;
       this.loader.show();
     }
 
-    const token = this.auth.getToken?.();
     const authReq = token
       ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
       : req;
@@ -41,7 +41,10 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(authReq).pipe(
 
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
+
+        const errType = error?.error?.type;
+
+        if (error.status === 401 && errType === 'TOKEN_EXPIRED') {
           this.notify.error("Your session has expired!");
           this.auth.logOut();
         }

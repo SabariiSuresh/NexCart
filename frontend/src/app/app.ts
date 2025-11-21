@@ -15,7 +15,7 @@ export class App implements OnInit{
   constructor(private  loderService : LoaderService , private change : ChangeDetectorRef){
     this.loderService.isLoading.subscribe((res)=>{
       this.loading = res;
-      this.change.detectChanges();
+      this.change.markForCheck();
     });
   }
 

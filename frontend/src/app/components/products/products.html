@@ -16,13 +16,13 @@
           (onClick)="addToWishlist(product._id)">
         </p-button>
 
-        <p-galleria *ngIf="product.images?.length" [value]="product.images" [showThumbnails]="true"
-       [circular]="true" [responsiveOptions]="responsiveOptions"
-          [thumbnailsPosition]="'left'" containerStyleClass="w-full rounded-lg bg-gray-500 shadow-sm">
+        <p-galleria *ngIf="product.images?.length" [value]="product.images" [showIndicators]="true"
+          [indicatorsPosition]="'right'" [autoPlay]="true" [circular]="true" [responsiveOptions]="responsiveOptions"
+          containerStyleClass="w-full rounded-lg bg-gray-500 shadow-sm">
 
           <ng-template pTemplate="item" let-image>
             <div class="flex items-center justify-center w-full bg-white">
-              <img [src]="product.images[0].startsWith('http') ? product.images[0] :'http://localhost:3000' + image" alt="{{ product.name }}"
+              <img [src]="image.startsWith('http') ? image :'http://localhost:3000' + image" alt="{{ product.name }}"
                 class="object-contain w-full h-[420px] sm:h-[450px] md:h-[480px] lg:h-[500px] transition-transform duration-300"
                 [ngClass]="{ 'opacity-60': product.stock <= 0 }" />
             </div>
@@ -30,7 +30,7 @@
 
           <ng-template pTemplate="thumbnail" let-image>
             <div class="flex items-center justify-center bg-white p-1 rounded-md border border-gray-200">
-              <img [src]="product.images[0].startsWith('http') ? product.images[0] :'http://localhost:3000' + image" alt="Thumbnail"
+              <img [src]="image.startsWith('http') ? image :'http://localhost:3000' + image" alt="Thumbnail"
                 class="object-cover w-20 h-20 sm:w-24 sm:h-24 rounded-full" />
             </div>
           </ng-template>
@@ -138,7 +138,8 @@
 
       <div
         class="relative group w-full sm:h-60 md:h-72 lg:h-70 aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-t-xl">
-        <img [src]="product.images[0].startsWith('http') ? product.images[0] :'http://localhost:3000' + rec.images[0]" alt="{{ rec.name }}"
+        <img [src]="rec.images.startsWith('http') ? rec.images :'http://localhost:3000' + rec.images"
+          alt="{{ rec.name }}"
           class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105" />
 
         <span *ngIf="rec.discount > 0"

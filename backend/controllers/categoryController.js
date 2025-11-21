@@ -1,6 +1,23 @@
 
 const Category = require('../models/category.model');
-const cloudinary = require('../config/cloudinary')
+const Product = require('../models/product.model');
+const cloudinary = require('../config/cloudinary');
+
+
+const getAllChildCategory = async (parentId) => {
+
+    const childCategories = await Category.find({ parent: parentId }).select('_id');
+
+    let ids = childCategories.map(catId => catId._id);
+
+    for (let category of childCategories) {
+        const subIds = await getAllChildCategory(category._id)
+        ids = ids.concat(subIds);
+    }
+
+    return ids
+}
+
 
 exports.createCategory = async (req, res) => {
     try {
@@ -178,3 +195,28 @@ exports.getCategoriesPublic = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to fetch categories', error: err.message });
     }
 };
+
+
+exports.getProductsFromParentCat = async (req, res) => {
+
+    try {
+
+        const parentId = req.params.id;
+        const childIds = await getAllChildCategory(parentId);
+
+        childIds.push(parentId);
+
+        const products = await Product.find({ category: { $in: childIds } });
+
+        return res.status(200).json({
+            success: true,
+            total: products.length,
+            products
+        });
+
+    } catch (err) {
+        return res.status(500).json({ success: false, message: 'Failed to fetch products', error: err.message });
+    }
+}
+
+

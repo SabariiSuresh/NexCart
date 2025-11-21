@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService } from '../../services/product/product-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../services/notification/notification-service';
 import { AuthService } from '../../services/auth/auth-service';
 import { FilterService } from '../../services/filter/filter-service';
+import { CategoryService } from '../../services/category/category-service';
 
 @Component({
   selector: 'app-category-product',
@@ -22,7 +22,7 @@ export class CategoryProduct implements OnInit {
 
   filteredProducts: any[] = [];
 
-  constructor(private auth: AuthService, private productService: ProductService, private route: ActivatedRoute, private router: Router, private notify: NotificationService, private filter: FilterService) { }
+  constructor(private auth: AuthService, private categoryService: CategoryService, private route: ActivatedRoute, private router: Router, private notify: NotificationService, private filter: FilterService) { }
 
   ngOnInit(): void {
 
@@ -39,17 +39,18 @@ export class CategoryProduct implements OnInit {
 
   loadCategoryproduct(categoryId: string) {
 
-    this.productService.getProductByCategory(categoryId).subscribe({
+    this.categoryService.getProductsFromParentcat(categoryId).subscribe({
 
       next: (res) => {
 
         this.products = res.products || res;
-        this.categoryName = res.category || '';
+        this.categoryName = this.products[0]?.categoryName || '';
         this.filteredProducts = [...this.products];
         this.filter.prepareFilter(this.products)
         this.setPaginatedProducts();
         this.categoryType(this.categoryName);
         this.applyFilters();
+        console.log(this.products);
       },
       error: err => console.error(err)
     });

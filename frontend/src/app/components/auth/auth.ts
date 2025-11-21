@@ -20,13 +20,13 @@ export class Auth implements OnInit {
   registerForm!: FormGroup;
 
 
-  constructor(private authService: AuthService, private messageService: MessageService, private form: FormBuilder, private router: Router , private notify : NotificationService) { }
+  constructor(private authService: AuthService, private messageService: MessageService, private form: FormBuilder, private router: Router, private notify: NotificationService) { }
 
   ngOnInit(): void {
 
     this.loginForm = this.form.group({
 
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\\.[a-zA-Z]{2,}')]),
       password: new FormControl('', [Validators.required])
 
     });
@@ -75,7 +75,7 @@ export class Auth implements OnInit {
 
               this.router.navigateByUrl(lastRoute);
               sessionStorage.removeItem('redirectAfterLogin');
-            } 
+            }
             else {
 
               this.router.navigate(['/home']);
@@ -83,9 +83,9 @@ export class Auth implements OnInit {
 
           }
 
-        }, error: err => {
+        }, error: (err) => {
 
-          this.notify.error('Login Failed');
+          this.notify.error(err.error?.message || 'Login Failed');
           this.loginForm.reset();
           console.error('Login error', err);
 
