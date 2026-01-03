@@ -21,21 +21,19 @@ export class Filters {
 
   apply() {
     this.filtersChanged.emit();
+    this.showDrawer = false;
   }
 
   reset() {
     this.filter.resetFilter();
     this.filtersChanged.emit();
+    this.showDrawer = false;
   }
 
   filterOrderStatus(status: string) {
     this.selectedStatus = status;
     this.statusChanged.emit(this.selectedStatus);
-  }
-
-  onCategoryChange(selectedCategory: string) {
-    this.filter.selectedCategory = selectedCategory;
-    this.filter.selectedSubcategories = [];
+    this.showDrawer = false;
   }
 
 

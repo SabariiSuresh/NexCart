@@ -3,7 +3,7 @@ import { ProductService } from '../../services/product/product-service';
 import { CategoryService } from '../../services/category/category-service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth-service';
-
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -23,6 +23,8 @@ export class Home implements OnInit {
   categories: any[] = [];
   products: any[] = [];
   productSections: any[] = [];
+
+  environment = environment;
 
   constructor(private productService: ProductService, private categoryService: CategoryService, private authService: AuthService, private router: Router) { }
 

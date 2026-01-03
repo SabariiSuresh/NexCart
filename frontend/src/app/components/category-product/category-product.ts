@@ -4,6 +4,7 @@ import { NotificationService } from '../../services/notification/notification-se
 import { AuthService } from '../../services/auth/auth-service';
 import { FilterService } from '../../services/filter/filter-service';
 import { CategoryService } from '../../services/category/category-service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-category-product',
@@ -13,12 +14,11 @@ import { CategoryService } from '../../services/category/category-service';
 })
 export class CategoryProduct implements OnInit {
 
+  environment = environment;
+
   categoryName = '';
   products: any[] = [];
-
-  paginatedProducts: any[] = [];
-  pageSize: number = 9;
-  currentPage: number = 0;
+  parrentCatId = '';
 
   filteredProducts: any[] = [];
 
@@ -29,8 +29,9 @@ export class CategoryProduct implements OnInit {
     this.filter.resetFilter();
 
     this.route.paramMap.subscribe(params => {
-      const categoryId = params.get('category') || '';
+      const categoryId = params.get('id') || '';
       if (categoryId) {
+        this.loadCategoryContex(categoryId)
         this.loadCategoryproduct(categoryId);
       }
     });
@@ -39,57 +40,91 @@ export class CategoryProduct implements OnInit {
 
   loadCategoryproduct(categoryId: string) {
 
+    this.parrentCatId = categoryId;
+
     this.categoryService.getProductsFromParentcat(categoryId).subscribe({
 
       next: (res) => {
 
         this.products = res.products || res;
-        this.categoryName = this.products[0]?.categoryName || '';
         this.filteredProducts = [...this.products];
         this.filter.prepareFilter(this.products)
-        this.setPaginatedProducts();
-        this.categoryType(this.categoryName);
-        this.applyFilters();
-        console.log(this.products);
       },
       error: err => console.error(err)
     });
-    
+
+  }
+
+  loadCategoryContex(categoryId: string) {
+
+    this.categoryService.getCategoriesById(categoryId).subscribe({
+
+      next: (res) => {
+        const category = res.category || res;
+
+        const type = category.type?.toLowerCase();
+
+        if (!type) return;
+
+        if (this.filter.categoryMap[type]) {
+          this.filter.isParent = true;
+          this.filter.selectedCategory = type;
+          this.filter.selectedSubcategories = [];
+        } else {
+          this.filter.isParent = false;
+          this.filter.selectedCategory = '';
+
+          for (const parent of Object.keys(this.filter.categoryMap)) {
+            if (this.filter.categoryMap[parent].includes(type)) {
+              this.filter.selectedCategory = parent;
+              this.filter.selectedSubcategories = [type];
+              break;
+            }
+          }
+        }
+      },
+      error: err => console.error('Category context load failed', err)
+    });
   }
 
 
-  categoryType(categoryId: string) {
-
-    const category = categoryId.toLowerCase().trim();
-    this.filter.isParent = Object.keys(this.filter.categoryMap).includes(category);
-
-    if (this.filter.isParent) {
-      this.filter.selectedCategory = category;
-      this.filter.selectedSubcategories = [];
-    } else {
-      this.filter.selectedCategory = '';
-      this.filter.selectedSubcategories = [];
-
-      for (const parent of Object.keys(this.filter.categoryMap)) {
-        if (this.filter.categoryMap[parent].includes(category)) {
-          this.filter.selectedSubcategories = [category];
-        }
-      }
-
+  getCategoryAndChildrenIds(categoryId: string, categories: any[]): string[] {
+    let ids: string[] = [categoryId];
+    const cat = categories.find(c => c._id === categoryId);
+    if (cat?.children?.length) {
+      cat.children.forEach((child: any) => {
+        ids = ids.concat(this.getCategoryAndChildrenIds(child._id, categories));
+      });
     }
-
+    return ids;
   }
 
 
   applyFilters() {
-    this.filteredProducts = this.filter.applyFilters(this.products)
 
-    if (this.filteredProducts.length === 0) {
-      this.notify.warning('No products match the selected filters.');
-    }
+    const params: any = {
+      parentCategoryId: this.parrentCatId,
+      subcategories: this.filter.selectedSubcategories.join(','),
+      brand: this.filter.selectedBrands.join(','),
+      minPrice: this.filter.priceRange[0],
+      maxPrice: this.filter.priceRange[1],
+      rating: this.filter.selectedRating,
+      discount: this.filter.selectedDiscounts.length
+        ? Math.max(...this.filter.selectedDiscounts)
+        : ''
+    };
 
-    this.currentPage = 0;
-    this.setPaginatedProducts();
+    this.categoryService.getFilteredProducts(params).subscribe({
+      next: (res) => {
+        this.filteredProducts = res.products;
+
+        if (!this.filteredProducts.length) {
+          this.notify.warning('No products match the selected filters.');
+        }
+
+      },
+      error: err => console.error(err)
+    });
   }
 
 
@@ -109,24 +144,6 @@ export class CategoryProduct implements OnInit {
 
   viewProduct(productId: string) {
     this.router.navigate(['/product', productId])
-  }
-
-
-
-  setPaginatedProducts() {
-
-    const start = this.currentPage * this.pageSize;
-    const end = start + this.pageSize;
-    this.paginatedProducts = this.filteredProducts.slice(start, end);
-  }
-
-
-  onPageChange(event: any) {
-
-    this.currentPage = event.page;
-    this.pageSize = event.rows;
-    this.setPaginatedProducts();
-
   }
 
 

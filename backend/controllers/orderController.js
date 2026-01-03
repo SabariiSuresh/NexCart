@@ -204,7 +204,7 @@ exports.cancellOrder = async (req, res) => {
 
         if (['Shipped', 'Delivered'].includes(order.status)) {
 
-            return res.status(400).json({ success: false, message: 'Canot cancel shipped/delivered order', order: order });
+            return res.status(400).json({ success: false, message: 'Canot cancel shipped/delivered order'});
 
         }
 

@@ -6,6 +6,7 @@ import { NotificationService } from '../../../services/notification/notification
 import { OrderService } from '../../../services/order/order-service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { PaymentDialog } from '../../payment/payment';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -14,6 +15,8 @@ import { PaymentDialog } from '../../payment/payment';
   styleUrl: './checkout.css'
 })
 export class Checkout implements OnInit {
+
+  environment = environment;
 
   checkoutItems: any[] = [];
   totalAmount: number = 0;

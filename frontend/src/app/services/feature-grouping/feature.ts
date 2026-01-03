@@ -55,8 +55,8 @@ export class Feature {
       Battery: ['capacity', 'charging speed', 'charging type'],
       Connectivity: ['bluetooth', 'wifi', 'nfc', '5g'],
       Sound: ['speaker type', 'dolby', '3.5mm jack'],
-      'Main Camera': ['camera type', 'wide', 'ultrawide', 'telephoto', 'periscope', 'ois', '8k video', '4k video', '1080p video'],
-      'Selfie Camera': ['selfie wide', 'selfie video', 'hdr selfie'],
+      'Main Camera': ['camera type', 'wide', 'ultrawide', 'telephoto', 'periscope', '8k video', '4k video', '1080p video'],
+      'Selfie Camera': ['selfie wide','selfie video','hdr selfie'],
       Memory: ['ram', 'internal', 'expandable storage'],
       Sensors: ['fingerprint', 'accelerometer', 'gyro', 'proximity', 'compass', 'barometer'],
       Build: ['weight', 'dimensions', 'material'],
@@ -99,7 +99,7 @@ export class Feature {
   };
 
   private categoryFeatureMap: Record<string, string[]> = {
-    mobiles: ['ram', 'internal', 'expandable storage', 'os', 'chipset', 'cpu', 'gpu', 'screen', 'resolution', 'size', 'camera type', 'wide', 'ultrawide', 'telephoto', 'periscope', 'ois', '8k video', '4k video', '1080p video', 'selfie wide', 'selfie video', 'hdr selfie', 'capacity', 'charging speed', 'charging type', 'speaker type', 'dolby', '3.5mm jack', 'fingerprint', 'accelerometer', 'gyro', 'proximity', 'compass', 'barometer', 'bluetooth', 'wifi', 'nfc', '5g', 'weight', 'dimensions', 'material'],
+    mobiles: ['ram', 'internal', 'expandable storage', 'os', 'chipset', 'cpu', 'gpu', 'screen', 'resolution', 'size', 'camera type', 'wide', 'ultrawide', 'telephoto', 'periscope', '8k video', '4k video', '1080p video', 'selfie wide', 'selfie video', 'hdr selfie', 'capacity', 'charging speed', 'charging type', 'speaker type', 'dolby', '3.5mm jack', 'fingerprint', 'accelerometer', 'gyro', 'proximity', 'compass', 'barometer', 'bluetooth', 'wifi', 'nfc', '5g', 'weight', 'dimensions', 'material'],
     speakers: ['power', 'wattage', 'connectivity', 'frequencyResponse', 'bass', 'treble', 'bluetooth', 'wifi', 'aux', 'usb', 'capacity', 'charging', 'battery', 'color', 'finish', 'water resistance', 'smart assistant support'],
     furnitures: ['wood', 'metal', 'glass', 'width', 'height', 'depth', 'weight', 'color', 'finish'],
     'mens clothing': ['size', 'fit', 'length', 'material', 'fabric', 'cotton', 'wool', 'color', 'pattern', 'print', 'brand', 'designer'],

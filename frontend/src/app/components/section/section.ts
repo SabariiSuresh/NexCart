@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product/product-service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-section',
@@ -9,6 +10,8 @@ import { ProductService } from '../../services/product/product-service';
   styleUrl: './section.css'
 })
 export class Section implements OnInit {
+
+  environment = environment;
 
   sectionKey!: string;
   sectionTitle!: string;

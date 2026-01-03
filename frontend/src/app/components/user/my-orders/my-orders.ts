@@ -3,6 +3,7 @@ import { OrderService } from '../../../services/order/order-service';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../../services/notification/notification-service';
 import { FilterService } from '../../../services/filter/filter-service';
+import { environment } from '../../../../environments/environment';
 
 interface Step {
   label: string;
@@ -16,6 +17,8 @@ interface Step {
   styleUrl: './my-orders.css'
 })
 export class MyOrders implements OnInit {
+
+  environment = environment;
 
   orders: any[] = [];
   paginatedOrders: any[] = [];

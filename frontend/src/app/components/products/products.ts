@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth/auth-service';
 import { NotificationService } from '../../services/notification/notification-service';
 import { WishlistService } from '../../services/wishlist/wishlist-service';
 import { Feature } from '../../services/feature-grouping/feature';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-products',
@@ -15,16 +16,14 @@ import { Feature } from '../../services/feature-grouping/feature';
 })
 export class ProductView implements OnInit {
 
+  environment = environment;
+
   topFeatures: { key: string, value: string }[] = [];
   featureGroups: { name: string, features: { key: string, value: string, tooltip?: string }[] }[] = [];
 
   product: any;
   recommended: any[] = [];
   wishlist: string[] = [];
-
-  paginatedProducts: any[] = [];
-  pageSize: number = 6;
-  currentPage: number = 0;
 
   constructor(private authService: AuthService, private cartservice: CartService, private wishlistService: WishlistService,private featureService : Feature , private productService: ProductService, private route: ActivatedRoute, private notify: NotificationService, private router: Router) { }
 
@@ -46,7 +45,6 @@ export class ProductView implements OnInit {
 
         this.product = res.product || res;
         this.recommended = res.recommended || [];
-        this.setPaginatedProducts();
 
         if (!this.product?.features) return;
         if (this.product?.features) {
@@ -129,6 +127,10 @@ export class ProductView implements OnInit {
       return;
     }
 
+    if(this.authService.getRole()){
+      
+    }
+
     this.wishlistService.addWishlist({ productId }).subscribe({
       next: () => {
         this.notify.success('Added to wishlist');
@@ -161,23 +163,6 @@ export class ProductView implements OnInit {
       this.authService.openAuthDialoge();
     }
   }
-
-  setPaginatedProducts() {
-
-    const start = this.currentPage * this.pageSize;
-    const end = start + this.pageSize;
-    this.paginatedProducts = this.recommended.slice(start, end);
-  }
-
-
-  onPageChange(event: any) {
-
-    this.currentPage = event.page;
-    this.pageSize = event.rows;
-    this.setPaginatedProducts();
-
-  }
-
 
   responsiveOptions = [
     {

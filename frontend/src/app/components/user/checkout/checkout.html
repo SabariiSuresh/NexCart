@@ -27,7 +27,7 @@
                                     <div class="flex items-center gap-5 p-5 bg-white ">
 
                                         <div class="w-35 h-44 md:h-50 md:w-50 flex-shrink-0 overflow-hidden rounded-xl">
-                                            <img [src]="item.product.images[0].startsWith('http') ? item.product.images[0] :'http://localhost:3000' + item.product.images[0]"
+                                            <img [src]="item.product.images[0].startsWith('http') ? item.product.images[0] : environment.apiUrl + item.product.images[0]"
                                                 alt="{{ item.product.name }}"
                                                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                                         </div>
@@ -37,7 +37,7 @@
                                                 <p class="text-lg font-semibold text-gray-800 pb-2">{{ item.product.name
                                                     | titlecase}}
                                                 </p>
-                                                <p class="text-gray-500 text-sm mt-1 line-clamp-2 pb-2">{{
+                                                <p class="text-gray-500 text-[11.5px] mt-1 line-clamp-2 pb-2">{{
                                                     item.product.description | titlecase }}</p>
                                             </div>
 

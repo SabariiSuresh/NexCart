@@ -4,12 +4,10 @@ import { Filters } from './filters/filters';
 import { Footer } from './footer/footer';
 import { MaterialsModule } from '../../materials/materials-module';
 
-
-
 @NgModule({
   declarations: [
     Filters,
-    Footer
+    Footer,
   ],
   imports: [
     CommonModule,
@@ -18,7 +16,7 @@ import { MaterialsModule } from '../../materials/materials-module';
   exports: [
     Filters,
     Footer,
-    MaterialsModule
+    MaterialsModule,
   ]
 })
 export class SharedModule { }

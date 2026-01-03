@@ -20,7 +20,7 @@
                     (click)="trackOrder(order._id)">
 
                     <div class="flex items-center gap-4 w-full sm:w-auto">
-                        <img [src]="order.orderItems[0]?.product?.images[0].startsWith('http') ? order.orderItems[0]?.product?.images[0] :'http://localhost:3000' + order.orderItems[0]?.product?.images[0]"
+                        <img [src]="order.orderItems[0]?.product?.images[0].startsWith('http') ? order.orderItems[0]?.product?.images[0] : environment.apiUrl + order.orderItems[0]?.product?.images[0]"
                             alt="{{ order.orderItems[0]?.name }}"
                             class="w-24 h-24 sm:w-20 sm:h-20 object-cover rounded-lg shadow-sm">
                         <div>

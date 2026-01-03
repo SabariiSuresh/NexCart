@@ -166,18 +166,30 @@ exports.deleteCategory = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Category not found' });
         }
 
+
         if (category.image) {
-            const imageUrl = category.image;
-            const publicId = imageUrl.substring(
-                imageUrl.lastIndexOf('nexcart/categories/'),
-                imageUrl.lastIndexOf('.')
-            );
-            await cloudinary.uploader.destroy(publicId);
+
+            try {
+
+                const imageUrl = category.image;
+                const segments = imageUrl.split('/');
+                const imageFile = segments.pop();
+                const fileName = imageFile.split('.')[0];
+
+                const uploadIndex = segments.indexOf('upload');
+                const publicId = segments.slice(uploadIndex + 1).join('/') + '/' + fileName;
+
+                await cloudinary.uploader.destroy(publicId);
+
+            } catch (err) {
+                console.error('Cloudinary delection failed', err.message);
+            }
         }
 
         await Category.findByIdAndDelete(req.params.id);
 
         return res.status(200).json({ success: true, message: 'Category deleted successfully' });
+
     } catch (err) {
         return res.status(500).json({
             success: false,
@@ -206,7 +218,7 @@ exports.getProductsFromParentCat = async (req, res) => {
 
         childIds.push(parentId);
 
-        const products = await Product.find({ category: { $in: childIds } });
+        const products = await Product.find({ category: { $in: childIds } }).populate('category', 'name type');;
 
         return res.status(200).json({
             success: true,
@@ -220,3 +232,85 @@ exports.getProductsFromParentCat = async (req, res) => {
 }
 
 
+exports.getFilteredProducts = async (req, res) => {
+  try {
+    const {
+      parentCategoryId,
+      subcategories,
+      brand,
+      minPrice,
+      maxPrice,
+      rating,
+      discount
+    } = req.query;
+
+    let categoryIds = [];
+
+    if (parentCategoryId) {
+      categoryIds = await getAllChildCategory(parentCategoryId);
+      categoryIds.push(parentCategoryId);
+    }
+
+    const matchStage = {};
+
+    if (categoryIds.length) {
+      matchStage.category = { $in: categoryIds };
+    }
+
+    if (minPrice || maxPrice) {
+      matchStage.price = {};
+      if (minPrice) matchStage.price.$gte = Number(minPrice);
+      if (maxPrice) matchStage.price.$lte = Number(maxPrice);
+    }
+
+    if (brand) {
+      matchStage.brand = {
+        $in: brand.split(',').map(b => new RegExp(`^${b}$`, 'i'))
+      };
+    }
+
+    if (rating) {
+      matchStage.rating = { $gte: Number(rating) };
+    }
+
+    if (discount) {
+      matchStage.discount = { $gte: Number(discount) };
+    }
+
+    const pipeline = [
+      { $match: matchStage },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'category'
+        }
+      },
+      { $unwind: '$category' }
+    ];
+
+    if (subcategories) {
+      const subArray = subcategories.split(',').map(s => s.toLowerCase());
+
+      pipeline.push({
+        $match: {
+          $expr: {
+            $in: [{ $toLower: '$category.type' }, subArray]
+          }
+        }
+      });
+    }
+
+    const products = await Product.aggregate(pipeline);
+
+    res.status(200).json({
+      success: true,
+      total: products.length,
+      products
+    });
+
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

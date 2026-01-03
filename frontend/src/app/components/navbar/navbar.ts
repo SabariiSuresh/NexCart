@@ -8,6 +8,7 @@ import { Profile } from '../profile/profile';
 import { MenuItem } from 'primeng/api';
 import { CartService } from '../../services/cart/cart-service';
 import { WishlistService } from '../../services/wishlist/wishlist-service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -16,6 +17,8 @@ import { WishlistService } from '../../services/wishlist/wishlist-service';
   styleUrl: './navbar.css'
 })
 export class Navbar implements OnInit {
+
+  environment = environment;
 
   userMenuItems: MenuItem[] = [];
   adminMenuItems: MenuItem[] = [];

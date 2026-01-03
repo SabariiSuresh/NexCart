@@ -43,7 +43,7 @@ import { Section } from './components/section/section';
     PaymentDialog,
     Profile,
     Wildcard,
-    Section
+    Section,
   ],
   imports: [
     BrowserModule,

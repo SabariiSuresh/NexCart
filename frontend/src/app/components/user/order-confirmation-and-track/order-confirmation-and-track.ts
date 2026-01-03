@@ -3,6 +3,7 @@ import { OrderService } from '../../../services/order/order-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { NotificationService } from '../../../services/notification/notification-service';
+import { environment } from '../../../../environments/environment';
 
 interface Step {
   label: string;
@@ -16,6 +17,8 @@ interface Step {
   styleUrl: './order-confirmation-and-track.css'
 })
 export class OrderConfirmationAndTrack implements OnInit {
+
+  environment = environment;
 
   orderId!: string;
   order!: any;

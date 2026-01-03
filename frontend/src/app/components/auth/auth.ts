@@ -17,7 +17,7 @@ export class Auth implements OnInit {
   showDialog = false;
 
   loginForm!: FormGroup;
-  registerForm!: FormGroup;
+  registerForm!: FormGroup; 
 
 
   constructor(private authService: AuthService, private messageService: MessageService, private form: FormBuilder, private router: Router, private notify: NotificationService) { }

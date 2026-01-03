@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -25,6 +25,25 @@ export class CategoryService {
   getPublicCategories(): Observable<any> {
     return this.http.get(`${this.categoryUrl}/public`, this.getAuthHeaders());
   }
+
+  getFilteredProducts(params: any): Observable<any> {
+    let httpParams = new HttpParams();
+
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+        httpParams = httpParams.set(key, params[key]);
+      }
+    });
+
+    return this.http.get(
+      `${this.categoryUrl}/filters`,
+      {
+        ...this.getAuthHeaders(),
+        params: httpParams
+      }
+    );
+  }
+
 
   getProductsFromParentcat(id: string): Observable<any> {
     return this.http.get(`${this.categoryUrl}/${id}/products`, this.getAuthHeaders());

@@ -3,6 +3,7 @@ import { CartService } from '../../../services/cart/cart-service';
 import { Router } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { NotificationService } from '../../../services/notification/notification-service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-cart',
@@ -11,6 +12,8 @@ import { NotificationService } from '../../../services/notification/notification
   styleUrl: './cart.css'
 })
 export class Cart implements OnInit {
+
+  environment = environment;
 
   product: any = '';
   cartItems: any[] = [];

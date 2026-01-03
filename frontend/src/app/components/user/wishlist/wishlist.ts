@@ -4,6 +4,7 @@ import { NotificationService } from '../../../services/notification/notification
 import { ConfirmationService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FilterService } from '../../../services/filter/filter-service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-wishlist',
@@ -12,6 +13,8 @@ import { FilterService } from '../../../services/filter/filter-service';
   styleUrl: './wishlist.css'
 })
 export class Wishlist implements OnInit {
+
+  environment = environment;
 
   wishlists: any[] = [];
   product: any[] = [];
@@ -35,6 +38,10 @@ export class Wishlist implements OnInit {
     this.wishlistService.getWishlist().subscribe({
       next: (res) => {
         this.wishlists = res.wishList?.items || [];
+        this.product = this.wishlists.map(w => w.product);
+        this.filter.prepareFilter(this.product);
+        this.filteredProducts = [...this.product];
+        this.setPaginatedProducts();
       },
       error: (err) => {
         this.notify.error('Failed to get wishlist');

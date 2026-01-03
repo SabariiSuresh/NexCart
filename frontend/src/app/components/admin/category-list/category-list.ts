@@ -98,7 +98,6 @@ export class CategoryList implements OnInit {
     this.formTitle = 'Add Category';
     this.displayForm = true;
 
-
   }
 
   editCategory(category: any) {

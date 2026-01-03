@@ -1,7 +1,7 @@
 
 const Product = require('../models/product.model');
 const Category = require('../models/category.model');
-const Order = require('../models/order.model');
+const Order = require('../models/order.model'); 
 const cloudinary = require('../config/cloudinary');
 
 const generateTags = (name, categoryName) => {
@@ -255,8 +255,16 @@ exports.deleteProduct = async (req, res) => {
 
         for (const img of product.images) {
             try {
-                const publicId = img.split('/').slice(-2).join('/').split('.')[0];
+
+                const segments = img.split('/');
+                const imageFile = segments.pop();
+                const fileName = imageFile.split('.')[0];
+
+                const uploadIndex = segments.indexOf('upload');
+                const publicId = segments.slice(uploadIndex + 1).join('/') + '/' + fileName;
+
                 await cloudinary.uploader.destroy(publicId);
+
             } catch (err) {
                 console.error('Failed to delete image:', err.message);
             }

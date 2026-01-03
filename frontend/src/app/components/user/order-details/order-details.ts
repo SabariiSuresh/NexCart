@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { OrderService } from '../../../services/order/order-service';
 import { ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../../../services/notification/notification-service';
+import { environment } from '../../../../environments/environment';
 
 interface Step {
   label: string;
@@ -15,6 +16,8 @@ interface Step {
   styleUrl: './order-details.css'
 })
 export class OrderDetails {
+
+  environment = environment;
 
   order: any;
   steps: Step[] = [];

@@ -21,11 +21,11 @@
 
             <span *ngIf="product.discount > 0"
                 class="absolute top-3 left-3 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
-                -{{ product.discount }}%
+                {{ product.discount }}% OFF
             </span>
 
             <div class="relative w-full h-40 sm:h-48 md:h-56 flex items-center justify-center">
-                <img [src]="product.images[0].startsWith('http') ? product.images[0] :'http://localhost:3000' + product.images[0]" alt="{{ product.name }}"
+                <img [src]="product.images[0].startsWith('http') ? product.images[0] : environment.apiUrl + product.images[0]" alt="{{ product.name }}"
                     class="h-full object-contain p-3 sm:p-4 transition-transform duration-700 group-hover:scale-110" />
             </div>
 

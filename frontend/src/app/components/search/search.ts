@@ -5,6 +5,7 @@ import { FilterService } from '../../services/filter/filter-service';
 import { NotificationService } from '../../services/notification/notification-service';
 import { AuthService } from '../../services/auth/auth-service';
 import { CartService } from '../../services/cart/cart-service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-search',
@@ -13,6 +14,8 @@ import { CartService } from '../../services/cart/cart-service';
   styleUrl: './search.css'
 })
 export class Search {
+
+  environment = environment;
 
   products: any[] = [];
   product: any;
@@ -70,7 +73,7 @@ export class Search {
   }
 
   applyFilters() {
-    this.filteredProducts = this.filter.applyFilters(this.products);
+    // this.filteredProducts = this.filter.applyFilters(this.products);
     this.totalProducts = this.filteredProducts.length;
 
     if (this.filteredProducts.length === 0) {

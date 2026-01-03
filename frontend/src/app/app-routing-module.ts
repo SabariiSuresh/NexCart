@@ -5,14 +5,13 @@ import { ProductView } from './components/products/products';
 import { CategoryProduct } from './components/category-product/category-product';
 import { Search } from './components/search/search';
 import { Wildcard } from './components/wildcard/wildcard';
-import { Section } from './components/section/section';
 
 const routes: Routes = [
 
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: Home },
   { path: 'product/:id', component: ProductView },
-  { path: 'category/:category', component: CategoryProduct },
+  { path: 'category/:id', component: CategoryProduct },
   { path: 'search', component: Search },
 
   { path: 'section/:key', loadChildren: () => import('./components/section/section-module').then(m => m.SectionModule) },
