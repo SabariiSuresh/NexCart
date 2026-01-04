@@ -30,8 +30,10 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.auth.getToken?.();
 
     if (shouldShowLoader) {
+      if (this.activeRequests === 0) {
+        this.loader.show();
+      }
       this.activeRequests++;
-      this.loader.show();
     }
 
     const authReq = token
@@ -55,7 +57,7 @@ export class AuthInterceptor implements HttpInterceptor {
         if (shouldShowLoader) {
           this.activeRequests--;
           if (this.activeRequests === 0) {
-            setTimeout(() => this.loader.hide(), 150);
+            this.loader.hide()
           }
         }
       })

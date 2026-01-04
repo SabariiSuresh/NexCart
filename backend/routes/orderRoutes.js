@@ -8,6 +8,7 @@ const orderController = require('../controllers/orderController');
 router.post('/', protect, orderController.placeOrder);
 router.get('/my', protect, orderController.getMyOrder);
 router.get('/last-address', protect, orderController.getLastAddress);
+
 router.get('/:id', protect, orderController.getOrderById);
 router.post('/:id/cancel', protect, orderController.cancellOrder);
 
