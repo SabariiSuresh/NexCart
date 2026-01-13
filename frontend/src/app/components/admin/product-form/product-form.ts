@@ -23,6 +23,9 @@ export class ProductForm implements OnInit, OnChanges {
 
   categoryIdMap: Record<string, string> = {};
 
+  multiSelectKeys = ['ram', 'internal', 'charging type'];
+
+
   constructor(
     private form: FormBuilder,
     private productService: ProductService,
@@ -136,35 +139,92 @@ export class ProductForm implements OnInit, OnChanges {
 
 
   private setFeaturesByCategory(categoryId: string, productFeatures: any = {}) {
-    const type = this.categoryIdMap[categoryId];
-    const featuresList = this.featureService.categoryFeature()[type] || [];
 
+    const type = this.categoryIdMap[categoryId];
+    if (!type) return;
+
+    const categoryMap = this.featureService.getFeatureOptionsMap()[type] || {};
     const featuresGroup = this.form.group({});
 
-    featuresList.forEach(key => {
-      featuresGroup.addControl(key, this.form.control(productFeatures?.[key] || ''));
+    Object.keys(categoryMap).forEach(featureKey => {
+
+      const options = this.getFeatureOptions(featureKey);
+      let value = productFeatures?.[featureKey] ?? [];
+
+      if (this.isBooleanFeature(featureKey)) {
+
+        const normalized = value === true || value === 'Yes';
+        featuresGroup.addControl(featureKey, this.form.control(normalized));
+
+      } else if (options.length > 0 && this.isMultiSelectFeature(featureKey)) {
+
+        const array = this.form.array(
+          options.map(opt => Array.isArray(value) && value.includes(opt))
+        );
+
+        featuresGroup.addControl(featureKey, array);
+
+      } else if (options.length > 0) {
+
+        featuresGroup.addControl(featureKey, this.form.control(value ?? ''));
+
+      }
+
     });
 
-    const extraKeys = Object.keys(productFeatures || {}).filter(
-      key => !featuresList.includes(key)
-    );
-
-    if (extraKeys.length > 0) {
-      console.warn('Ignoring unused feature keys:', extraKeys);
-    }
-
-    if (Object.keys(productFeatures).length) {
-      Object.entries(productFeatures).forEach(([key, value]) => {
-        if (!featuresGroup.contains(key) && type === this.categoryIdMap[categoryId]) {
-          featuresGroup.addControl(key, this.form.control(value));
-        }
-      });
-    }
+    Object.entries(productFeatures || {}).forEach(([key, value]) => {
+      if (!featuresGroup.contains(key)) {
+        if (this.isBooleanFeature(key)) value = value === true || value === 'Yes';
+        featuresGroup.addControl(key, this.form.control(value));
+      }
+    });
 
     this.productForm.setControl('features', featuresGroup);
-    this.cd.detectChanges();
   }
 
+
+  getFeatureOptions(key: string): string[] {
+    const categoryType =
+      this.categoryIdMap[this.productForm.value.category?.key];
+
+    if (!categoryType) return [];
+
+    return (
+      this.featureService
+        .getFeatureOptionsMap()[categoryType]?.[key] || []
+    );
+  }
+
+
+  hasOptions(key: string): boolean {
+    return this.getFeatureOptions(key).length > 0;
+  }
+
+
+  isBooleanFeature(key: string): boolean {
+    const options = this.getFeatureOptions(key);
+    return options.length === 2 &&
+      options.includes('Yes') &&
+      options.includes('No');
+  }
+
+  formatFeatureLabel(key: string): string {
+    return key
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  getFeatureDropdownOptions(key: string) {
+    return this.getFeatureOptions(key).map(o => ({ label: o, value: o }));
+  }
+
+  isMultiSelectFeature(key: string): boolean {
+    return this.multiSelectKeys.includes(key);
+  }
+
+  getFeatureArray(key: string): FormArray {
+    return this.featuresGroup.get(key) as FormArray;
+  }
 
 
   submitForm() {
@@ -174,6 +234,27 @@ export class ProductForm implements OnInit, OnChanges {
     const formData = new FormData();
     const value = this.productForm.value;
 
+    const featuresValue: Record<string, any> = {};
+
+    Object.keys(this.featuresGroup.controls).forEach(key => {
+      const ctrl = this.featuresGroup.get(key);
+
+      if (!ctrl) return;
+
+      if (ctrl instanceof FormArray) {
+        const options = this.getFeatureOptions(key);
+
+        featuresValue[key] = ctrl.value
+          .map((checked: boolean, i: number) =>
+            checked ? options[i] : null
+          )
+          .filter((v: string | null): v is string => v !== null);
+
+      } else {
+        featuresValue[key] = ctrl.value;
+      }
+    });
+
     formData.append('name', value.name);
     formData.append('description', value.description);
     formData.append('brand', value.brand);
@@ -181,7 +262,7 @@ export class ProductForm implements OnInit, OnChanges {
     formData.append('oldPrice', value.oldPrice || 0);
     formData.append('discount', String(Number(value.discount || 0)));
     formData.append('stock', value.stock);
-    formData.append('features', JSON.stringify(value.features));
+    formData.append('features', JSON.stringify(featuresValue));
 
     const categoryId = value.category?.key;
     formData.append('category', categoryId);
@@ -224,8 +305,12 @@ export class ProductForm implements OnInit, OnChanges {
 
   addFeature(keyInput: HTMLInputElement, valueInput: HTMLInputElement) {
     const key = keyInput.value.trim();
-    const value = valueInput.value.trim();
+    let value: string | boolean = valueInput.value.trim();
     if (!key || !value) return;
+
+    if (this.isBooleanFeature(key)) {
+      value = value === 'Yes' ? true : false;;
+    }
 
     if (!this.featuresGroup.contains(key)) {
       this.featuresGroup.addControl(key, this.form.control(value));

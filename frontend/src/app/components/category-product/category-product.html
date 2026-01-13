@@ -14,8 +14,7 @@
 
         <div
           class="relative group w-full sm:h-60 md:h-72 lg:h-70 aspect-square sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-t-xl">
-          <img
-            [src]="product.images[0].startsWith('http') ? product.images[0] : environment.apiUrl + product.images[0]"
+          <img [src]="product.images[0].startsWith('http') ? product.images[0] : environment.apiUrl + product.images[0]"
             alt="{{ product.name }}"
             class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105" />
           <span *ngIf="product.discount > 0"

@@ -26,10 +26,11 @@ export class Home implements OnInit {
 
   environment = environment;
 
-  constructor(private productService: ProductService, private categoryService: CategoryService, private authService: AuthService, private router: Router) { }
+  constructor(private productService: ProductService, private categoryService: CategoryService, private authService: AuthService, private router: Router) {
+    this.loadCategories();
+  }
 
   ngOnInit(): void {
-    this.loadCategories();
     this.loadSections();
   }
 

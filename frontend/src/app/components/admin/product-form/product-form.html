@@ -12,18 +12,43 @@
     </p-treeSelect>
 
     <div formGroupName="features" *ngIf="featuresGroup" class="border p-4 rounded-md bg-gray-50">
+      
       <h3 class="text-lg font-semibold mb-3 pb-2">Product Features</h3>
 
       <div *ngIf="featureKeys.length === 0" class="text-gray-500 p-2">
         No features defined for this category.
       </div>
 
-      <div *ngFor="let key of featureKeys; let i = index" class="flex items-center gap-3 mb-2 pb-2">
-        <input pInputText [formControlName]="key" placeholder="Feature Value" class="flex-1" />
-        <span class="w-40 text-gray-700 font-medium">{{ key | titlecase}}</span>
-        <p-button icon="pi pi-trash" severity="danger" class="ml-2" (click)="removeFeature(key)" type="button">
+      <div *ngFor="let key of featureKeys" class="grid grid-cols-3 gap-6 pb-2 items-center mb-3">
+
+        <label class="font-medium">{{ formatFeatureLabel(key) }}</label>
+
+        <div *ngIf="isMultiSelectFeature(key)" [formArrayName]="key" class="flex flex-wrap gap-6">
+          <div *ngFor="let opt of getFeatureOptions(key); let i = index" class="flex items-center gap-2">
+            <p-checkbox binary="true" [formControlName]="i" [inputId]="key + '-' + i"></p-checkbox>
+
+            <label [for]="key + '-' + i" class="cursor-pointer">
+              {{ opt }}
+            </label>
+          </div>
+        </div>
+
+
+        <div *ngIf="isBooleanFeature(key)" class="flex items-center gap-2">
+          <p-checkbox binary="true" [formControlName]="key"></p-checkbox>
+          <span>{{ featuresGroup.get(key)?.value ? 'Yes' : 'No' }}</span>
+        </div>
+
+        <p-select *ngIf="hasOptions(key) && !isMultiSelectFeature(key) && !isBooleanFeature(key)"
+          [options]="getFeatureDropdownOptions(key)" [formControlName]="key"
+          placeholder="Select {{ formatFeatureLabel(key) }}"></p-select>
+
+
+        <p-button icon="pi pi-trash" severity="danger" type="button" (click)="removeFeature(key)">
         </p-button>
+
       </div>
+
 
       <div class="flex gap-2 mt-3">
         <input pInputText #newFeatureName placeholder="Feature Name" class="flex-1" />

@@ -25,7 +25,7 @@ export class ProductView implements OnInit {
   recommended: any[] = [];
   wishlist: string[] = [];
 
-  constructor(private authService: AuthService, private cartservice: CartService, private wishlistService: WishlistService,private featureService : Feature , private productService: ProductService, private route: ActivatedRoute, private notify: NotificationService, private router: Router) { }
+  constructor(private authService: AuthService, private cartservice: CartService, private wishlistService: WishlistService, private featureService: Feature, private productService: ProductService, private route: ActivatedRoute, private notify: NotificationService, private router: Router) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -127,8 +127,8 @@ export class ProductView implements OnInit {
       return;
     }
 
-    if(this.authService.getRole()){
-      
+    if (this.authService.getRole()) {
+
     }
 
     this.wishlistService.addWishlist({ productId }).subscribe({
@@ -178,6 +178,27 @@ export class ProductView implements OnInit {
       numVisible: 1
     }
   ];
+
+
+  isArray(value: any): value is string[] {
+    return Array.isArray(value);
+  }
+
+  isBoolean(value: any): value is boolean {
+    return typeof value === 'boolean';
+  }
+
+  formatFeatureValue(value: any): string {
+    if (Array.isArray(value)) {
+      return value.join(', ');
+    }
+
+    if (typeof value === 'boolean') {
+      return value ? 'YES' : 'NO';
+    }
+
+    return value;
+  }
 
 
   toString(value: unknown): string {

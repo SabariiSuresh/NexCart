@@ -37,6 +37,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { DrawerModule } from 'primeng/drawer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { CheckboxModule } from 'primeng/checkbox';
 
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
@@ -46,6 +47,7 @@ import { MatButtonModule } from '@angular/material/button';
   declarations: [],
   imports: [
     FileUploadModule,
+    CheckboxModule,
     SliderModule,
     OverlayBadgeModule,
     DrawerModule,
@@ -106,6 +108,7 @@ import { MatButtonModule } from '@angular/material/button';
     RadioButtonModule,
     DataView,
     ConfirmPopupModule,
+    CheckboxModule,
     PaginatorModule,
     SelectButtonModule,
     AutoCompleteModule,
