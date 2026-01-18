@@ -29,7 +29,8 @@ import { Badge } from "primeng/badge";
 import { SharedModule } from './components/shared/shared-module';
 import { Wildcard } from './components/wildcard/wildcard';
 import { Section } from './components/section/section';
-
+import { SocialLoginModule, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { Section } from './components/section/section';
     AppRoutingModule,
     MaterialsModule,
     HttpClientModule,
+    SocialLoginModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -58,13 +60,30 @@ import { Section } from './components/section/section';
     DatePicker,
     Badge,
     SharedModule
-],
+  ],
   providers: [
+    
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DialogService,
     provideBrowserGlobalErrorListeners(),
     MessageService,
     ConfirmationService,
+
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              'YOUR_GOOGLE_CLIENT_ID'
+            )
+          }
+        ]
+      } as SocialAuthServiceConfig
+    },
+
     providePrimeNG({
       theme: {
         preset: Aura,

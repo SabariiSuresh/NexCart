@@ -32,7 +32,6 @@ export class ProductView implements OnInit {
       const productId = params.get('id');
       if (productId) this.loadProduct(productId);
     });
-    this.loadWishlist();
   }
 
 
@@ -137,7 +136,16 @@ export class ProductView implements OnInit {
         this.wishlist.push(productId);
       },
       error: err => {
-        if (err.status === 400) this.notify.warning('Already in wishlist');
+        if (err.status === 400) {
+
+          this.notify.warning('Already in wishlist');
+
+        } else if (err.status === 401) {
+
+          this.notify.warning('login to add products to wishlist');
+          this.authService.openAuthDialoge();
+
+        }
         else this.notify.error('Failed to add to wishlist');
         console.error("Wishlist error", err);
       }

@@ -1,6 +1,14 @@
-<div *ngIf="loading" class="fixed inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-  <p-progressSpinner strokeWidth="7" animationDuration=".9s"></p-progressSpinner>
-  <p class="text-white mt-4 text-lg font-medium animate-pulse">Loading...</p>
+<div *ngIf="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center
+         bg-black/30 backdrop-blur-md">
+
+  <div class="relative">
+    <p-progressSpinner strokeWidth="7" animationDuration=".9s" styleClass="w-20 h-20">
+    </p-progressSpinner>
+  </div>
+
+  <p class="mt-6 text-white text-lg tracking-wide animate-pulse">
+    Loading, please wait…
+  </p>
 </div>
 
 

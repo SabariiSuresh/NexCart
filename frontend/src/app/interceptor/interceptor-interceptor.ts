@@ -16,6 +16,7 @@ import { NotificationService } from '../services/notification/notification-servi
 export class AuthInterceptor implements HttpInterceptor {
 
   private activeRequests = 0;
+  private logoutTriggered: boolean = false;
   private readonly excludedUrls = ['/quick-search'];
 
   constructor(
@@ -26,7 +27,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    const shouldShowLoader = !this.excludedUrls.some(url => req.url.includes(url));
+    const shouldShowLoader = !this.excludedUrls.some(url => req.url.includes(url)) && !req.url.includes('/assets/');
+
     const token = this.auth.getToken?.();
 
     if (shouldShowLoader) {
@@ -46,18 +48,22 @@ export class AuthInterceptor implements HttpInterceptor {
 
         const errType = error?.error?.type;
 
-        if (error.status === 401 && errType === 'TOKEN_EXPIRED') {
+        if (error.status === 401 && errType === 'TOKEN_EXPIRED' && !this.logoutTriggered) {
+
+          this.logoutTriggered = true;
           this.notify.error("Your session has expired!");
           this.auth.logOut();
+          
         }
         return throwError(() => error);
       }),
 
       finalize(() => {
         if (shouldShowLoader) {
-          this.activeRequests--;
+          this.activeRequests = Math.max(0, this.activeRequests - 1);
+
           if (this.activeRequests === 0) {
-            this.loader.hide()
+            this.loader.hide();
           }
         }
       })

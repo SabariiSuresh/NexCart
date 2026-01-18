@@ -16,7 +16,7 @@ export class Home implements OnInit {
 
   banners = [
     { image: 'assets/bigsale.png' },
-    { image: 'assets/new.jpg' },
+    { image: 'assets/new.png' },
     { image: 'assets/offer.png' }
   ];
 
@@ -26,12 +26,11 @@ export class Home implements OnInit {
 
   environment = environment;
 
-  constructor(private productService: ProductService, private categoryService: CategoryService, private authService: AuthService, private router: Router) {
-    this.loadCategories();
-  }
+  constructor(private productService: ProductService, private categoryService: CategoryService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadSections();
+    this.loadCategories();
   }
 
   loadCategories() {
@@ -55,7 +54,7 @@ export class Home implements OnInit {
         }
 
         if (res.topProducts?.length) {
-          blocks.push({ title: 'Top Products for You', key: 'topProducts', products: res.topProducts });
+          blocks.push({ title: 'Top Products', key: 'topProducts', products: res.topProducts });
         }
 
         if (res.topElectronics?.length) {
