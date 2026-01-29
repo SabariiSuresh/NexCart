@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth-service';
 import { ProductService } from '../../services/product/product-service';
 import { NotificationService } from '../../services/notification/notification-service';
@@ -29,6 +29,7 @@ export class Navbar implements OnInit {
   selectedProduct: any = null;
 
   mobileMenuVisible: boolean = false;
+  showSearchBar: boolean = true
 
   cartCount: number = 0;
   wishlistcount: number = 0;
@@ -36,6 +37,13 @@ export class Navbar implements OnInit {
   constructor(private notify: NotificationService, private router: Router, private authservice: AuthService, private productService: ProductService, private dialogService: DialogService, private cartService: CartService, private wishlistService: WishlistService) { }
 
   ngOnInit(): void {
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.showSearchBar = event.urlAfterRedirects === '/home' || event.urlAfterRedirects.startsWith('/search')
+      }
+    })
+
     this.authservice.userName$.subscribe(name => {
       this.userName = name;
       if (this.isLoggedIn && name) {
@@ -259,7 +267,7 @@ export class Navbar implements OnInit {
     if (this.authservice.isLoggedIn()) {
       this.router.navigate(['/user/cart'])
     } else {
-      this.notify.warning('Please Login to access')
+      this.notify.warning('Login to access')
     }
   }
 
@@ -268,7 +276,7 @@ export class Navbar implements OnInit {
     if (this.authservice.isLoggedIn()) {
       this.router.navigate(['/user/wishlist'])
     } else {
-      this.notify.warning('Please Login to access')
+      this.notify.warning('Login to access')
     }
   }
 

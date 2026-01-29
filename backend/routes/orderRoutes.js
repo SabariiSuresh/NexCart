@@ -6,6 +6,7 @@ const adminOnly = require('../middleware/adminMiddleware');
 const orderController = require('../controllers/orderController');
 
 router.post('/', protect, orderController.placeOrder);
+router.post('/preview', protect, orderController.orderPreview);
 router.get('/my', protect, orderController.getMyOrder);
 router.get('/last-address', protect, orderController.getLastAddress);
 

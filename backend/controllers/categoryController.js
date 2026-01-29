@@ -21,16 +21,22 @@ const getAllChildCategory = async (parentId) => {
 
 exports.createCategory = async (req, res) => {
     try {
-        const { name, description, parent, type } = req.body;
+        let { name, description, parent, type } = req.body;
 
-        const existingCategory = await Category.findOne({ name });
-
-        if (existingCategory) {
-            return res.status(400).json({ success: false, message: 'Category name already exists' })
+        if (!name || !type) {
+            return res.status(400).json({ success: false, message: 'Name and type are required' })
         }
+
+        name = name.trim().toLowerCase();
 
         const parentValue =
             parent && parent !== 'null' && parent !== '' ? parent : null;
+
+        const existingCategory = await Category.findOne({ name, parent: parentValue, type });
+
+        if (existingCategory) {
+            return res.status(400).json({ success: false, message: 'Category already exists under this parent' })
+        }
 
         const image = req.file ? req.file.path : '';
 
@@ -150,6 +156,22 @@ exports.updateCategory = async (req, res) => {
         }
 
 
+        if (data.name) {
+            data.name = data.name.trim().toLowerCase();
+        }
+
+        const duplicateCat = await Category.findOne({
+            _id: { $ne: req.params.id },
+            name: data.name ?? category.name,
+            parent: data.parent ?? category.parent,
+            type: data.type ?? category.type
+        });
+
+        if (duplicateCat) {
+            return res.status(400).json({ success: false, message: 'Category already exists under this parent' })
+        }
+
+
         const updatedCategory = await Category.findByIdAndUpdate(req.params.id, data, { new: true });
 
         return res.status(200).json({ success: true, message: 'Category updated successfully', updatedCategory });
@@ -233,84 +255,84 @@ exports.getProductsFromParentCat = async (req, res) => {
 
 
 exports.getFilteredProducts = async (req, res) => {
-  try {
-    const {
-      parentCategoryId,
-      subcategories,
-      brand,
-      minPrice,
-      maxPrice,
-      rating,
-      discount
-    } = req.query;
+    try {
+        const {
+            parentCategoryId,
+            subcategories,
+            brand,
+            minPrice,
+            maxPrice,
+            rating,
+            discount
+        } = req.query;
 
-    let categoryIds = [];
+        let categoryIds = [];
 
-    if (parentCategoryId) {
-      categoryIds = await getAllChildCategory(parentCategoryId);
-      categoryIds.push(parentCategoryId);
-    }
-
-    const matchStage = {};
-
-    if (categoryIds.length) {
-      matchStage.category = { $in: categoryIds };
-    }
-
-    if (minPrice || maxPrice) {
-      matchStage.price = {};
-      if (minPrice) matchStage.price.$gte = Number(minPrice);
-      if (maxPrice) matchStage.price.$lte = Number(maxPrice);
-    }
-
-    if (brand) {
-      matchStage.brand = {
-        $in: brand.split(',').map(b => new RegExp(`^${b}$`, 'i'))
-      };
-    }
-
-    if (rating) {
-      matchStage.rating = { $gte: Number(rating) };
-    }
-
-    if (discount) {
-      matchStage.discount = { $gte: Number(discount) };
-    }
-
-    const pipeline = [
-      { $match: matchStage },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'category',
-          foreignField: '_id',
-          as: 'category'
+        if (parentCategoryId) {
+            categoryIds = await getAllChildCategory(parentCategoryId);
+            categoryIds.push(parentCategoryId);
         }
-      },
-      { $unwind: '$category' }
-    ];
 
-    if (subcategories) {
-      const subArray = subcategories.split(',').map(s => s.toLowerCase());
+        const matchStage = {};
 
-      pipeline.push({
-        $match: {
-          $expr: {
-            $in: [{ $toLower: '$category.type' }, subArray]
-          }
+        if (categoryIds.length) {
+            matchStage.category = { $in: categoryIds };
         }
-      });
+
+        if (minPrice || maxPrice) {
+            matchStage.price = {};
+            if (minPrice) matchStage.price.$gte = Number(minPrice);
+            if (maxPrice) matchStage.price.$lte = Number(maxPrice);
+        }
+
+        if (brand) {
+            matchStage.brand = {
+                $in: brand.split(',').map(b => new RegExp(`^${b}$`, 'i'))
+            };
+        }
+
+        if (rating) {
+            matchStage.rating = { $gte: Number(rating) };
+        }
+
+        if (discount) {
+            matchStage.discount = { $gte: Number(discount) };
+        }
+
+        const pipeline = [
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'category'
+                }
+            },
+            { $unwind: '$category' }
+        ];
+
+        if (subcategories) {
+            const subArray = subcategories.split(',').map(s => s.toLowerCase());
+
+            pipeline.push({
+                $match: {
+                    $expr: {
+                        $in: [{ $toLower: '$category.type' }, subArray]
+                    }
+                }
+            });
+        }
+
+        const products = await Product.aggregate(pipeline);
+
+        res.status(200).json({
+            success: true,
+            total: products.length,
+            products
+        });
+
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
     }
-
-    const products = await Product.aggregate(pipeline);
-
-    res.status(200).json({
-      success: true,
-      total: products.length,
-      products
-    });
-
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
 };

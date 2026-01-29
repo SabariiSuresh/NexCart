@@ -15,7 +15,7 @@
     </p-autoComplete>
 
     <p-treeSelect [options]="categoryTree" placeholder="Filter by Category" [(ngModel)]="selectedCategory"
-      selectionMode="single" class="max-w-lg w-64" (onNodeSelect)="filterByCategory()">
+      selectionMode="single" class="max-w-lg w-64" (ngModelChange)="filterByCategory($event)">
     </p-treeSelect>
 
   </div>
@@ -63,7 +63,8 @@
 
   <p-dialog header="{{ formTitle }}" [(visible)]="displayForm" [modal]="true" [closable]="true"
     [style]="{ width: '90vw', maxWidth: '1000px' }" [breakpoints]="{'960px':'90vw','640px':'95vw'}">
-    <app-product-form [product]="selectedProduct" (formSaved)="onFormSaved($event)"></app-product-form>
+    <app-product-form [product]="selectedProduct" (formSaved)="onFormSaved($event)"
+      (formError)="onFormError()"></app-product-form>
   </p-dialog>
 
   <p-confirmpopup />

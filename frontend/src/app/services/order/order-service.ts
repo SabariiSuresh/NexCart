@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 })
 export class OrderService {
 
-  private orderUrl = environment.apiUrl+'/orders';
+  private orderUrl = environment.apiUrl + '/orders';
 
   constructor(private http: HttpClient) { }
 
@@ -55,10 +55,12 @@ export class OrderService {
     return this.http.put(`${this.orderUrl}/${id}/deliver`, { status }, this.getAuthHeaders());
   }
 
-
   getLastAddress(): Observable<any> {
     return this.http.get(`${this.orderUrl}/last-address`, this.getAuthHeaders());
   }
 
+  orderPreview(date: { items: any[] }): Observable<any> {
+    return this.http.post(`${this.orderUrl}/preview`, date, this.getAuthHeaders());
+  }
 
 }

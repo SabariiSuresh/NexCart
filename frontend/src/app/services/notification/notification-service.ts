@@ -9,7 +9,6 @@ export class NotificationService {
   private isMobile(): boolean {
     return window.innerWidth <= 640;
   }
-
   private showToast(
     message: string,
     icon: 'success' | 'error' | 'warning' | 'info'
@@ -19,24 +18,29 @@ export class NotificationService {
 
     Swal.fire({
       toast: true,
-      position: mobile ? 'bottom' : 'top-end',
+      position: mobile ? 'top' : 'top-end',
       icon,
       title: message,
       showConfirmButton: false,
-      timer: 3000,
+      timer: mobile ? 2200 : 3000,
       timerProgressBar: true,
 
-      background: mobile ? 'rgba(12,12,12,0.65)' : 'rgba(255, 255, 255, 0.15)',
+      background: mobile
+        ? '#111'
+        : 'rgba(255, 255, 255, 0.15)',
+
       color: '#fff',
       iconColor: this.getIconColor(icon),
 
-      width: mobile ? '90%' : 'auto',
-      padding: mobile ? '18px 22px' : '14px 20px',
+      width: mobile ? '100%' : 'auto',
+      padding: mobile ? '16px 18px' : '14px 20px',
 
-      customClass: { popup: mobile ? 'mobile-toast' : 'premium-toast' },
+      customClass: {
+        popup: mobile ? 'mobile-toast-pro' : 'premium-toast'
+      },
 
       showClass: {
-        popup: mobile ? 'toast-slide-up' : 'premium-toast-in'
+        popup: mobile ? 'toast-pop-in' : 'premium-toast-in'
       },
       hideClass: {
         popup: mobile ? 'toast-slide-down' : 'premium-toast-out'
@@ -44,9 +48,10 @@ export class NotificationService {
     });
 
     if (mobile && navigator.vibrate) {
-      navigator.vibrate(40);
+      navigator.vibrate(60);
     }
   }
+
 
   private getIconColor(type: string): string {
     switch (type) {

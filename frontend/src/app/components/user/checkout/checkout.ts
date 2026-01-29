@@ -19,12 +19,9 @@ export class Checkout implements OnInit {
   environment = environment;
 
   checkoutItems: any[] = [];
-  totalAmount: number = 0;
-  itemPrice: number = 0;
-  taxPrice: number = 0;
-  shippingPrice: number = 0;
-  deliveryPrice: number = 0;
   order: any = '';
+  preview: any = null;
+  previewLoading = false;
 
   payment: any = '';
   checkoutForm!: FormGroup;
@@ -75,73 +72,35 @@ export class Checkout implements OnInit {
 
   }
 
-
-
   increaseQuantity(index: number) {
     this.checkoutItems[index].quantity++;
-    this.calculateTotal();
+    this.loadPreview();
   }
 
 
   decreaseQuantity(index: number) {
     if (this.checkoutItems[index].quantity > 1) {
       this.checkoutItems[index].quantity--;
-      this.calculateTotal();
+      this.loadPreview();
     }
   }
-
-
-  calculateTotal() {
-
-    let itemPrice = 0;
-    let taxPrice = 0;
-
-    this.checkoutItems.forEach(item => {
-      const price = item.product.price;
-      const oldPrice = item.product.oldPrice || price;
-
-      const hasDiscount = oldPrice > price;
-
-      itemPrice += price * item.quantity;
-
-      if (!hasDiscount) {
-        taxPrice += Number((price * 0.18 * item.quantity).toFixed(2));
-      }
-    });
-
-    let shippingPrice = 0;
-    let deliveryPrice = 0;
-
-    if (itemPrice <= 1000) {
-      shippingPrice = 20;
-      deliveryPrice = 10;
-    } else if (itemPrice <= 2000) {
-      shippingPrice = 50;
-      deliveryPrice = 20;
-    } else {
-      shippingPrice = Math.min(Number((itemPrice * 0.01).toFixed(2)), 100);
-      deliveryPrice = Math.min(Number((itemPrice * 0.005).toFixed(2)), 50);
-    }
-    this.totalAmount = Number((itemPrice + taxPrice + shippingPrice + deliveryPrice).toFixed(2));
-    this.taxPrice = taxPrice;
-    this.shippingPrice = shippingPrice;
-    this.itemPrice = itemPrice;
-    this.deliveryPrice = deliveryPrice;
-  }
-
 
   placeOrder() {
+
+    if (!this.preview) {
+      this.notify.warning('Please wait, calculating order total');
+      return
+    }
 
     if (this.checkoutForm.invalid) {
       this.checkoutForm.markAllAsTouched();
       return;
     }
 
-    // if (!this.payment || this.payment.status != 'success') {
-    //   this.notify.warning('Please complete your payment first')
-    // } else {
-    //   return;
-    // }
+    const cartItems = this.checkoutItems.map(item => ({
+      productId: item.product._id,
+      qty: item.quantity
+    }));
 
     const shippingAddress = {
 
@@ -162,11 +121,6 @@ export class Checkout implements OnInit {
       alternateNumber: this.checkoutForm.value.alternateNumber
 
     };
-
-    const cartItems = this.checkoutItems.map(item => ({
-      productId: item.product._id,
-      qty: item.quantity
-    }));
 
     const paymentDetails: any = {};
     const method = this.checkoutForm.value.payment;
@@ -189,10 +143,7 @@ export class Checkout implements OnInit {
       shippingAddress,
       paymentMethod: method,
       paymentDetails,
-      itemPrice: this.itemPrice,
-      taxPrice: this.taxPrice,
-      shippingPrice: this.shippingPrice,
-      totalPrice: this.totalAmount
+      priceSummary: this.preview
     };
 
     this.orderService.placeOrder(orderData).subscribe({
@@ -218,7 +169,7 @@ export class Checkout implements OnInit {
           },
           data: {
             orderId: res.order._id,
-            amount: this.totalAmount,
+            amount: this.preview.totalPrice,
             method: method
           },
           focusOnShow: false
@@ -256,18 +207,45 @@ export class Checkout implements OnInit {
   }
 
 
+  loadPreview() {
+
+    this.previewLoading = true;
+    this.preview = null;
+
+    const cartItems = this.checkoutItems.map(item => ({
+      productId: item.product._id,
+      qty: item.quantity
+    }));
+
+    this.orderService.orderPreview({ items: cartItems }).subscribe({
+
+      next: (res) => {
+        this.preview = res;
+        this.previewLoading = false;
+      },
+      error: (err) => {
+        this.previewLoading = false;
+        console.error(err);
+        this.notify.error('Failed to calculate order');
+      }
+
+    })
+
+  }
+
+
   buyNowSave() {
     const buyNowItemParse = localStorage.getItem('buyNowItem')
     const buyNowItem = buyNowItemParse ? JSON.parse(buyNowItemParse) : null;
 
     if (buyNowItem && buyNowItem.product) {
       this.checkoutItems = [buyNowItem];
-      this.calculateTotal();
+      this.loadPreview();
     } else {
       this.cartService.getCart().subscribe({
         next: (res) => {
           this.checkoutItems = res.cart?.items || [];
-          this.calculateTotal();
+          this.loadPreview();
         },
         error: (err) => console.error(err)
       });

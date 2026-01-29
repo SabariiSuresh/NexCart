@@ -72,56 +72,76 @@
                                 </div>
 
                                 <div class="mt-6 pb-2 pt-4 px-5 md:px-0">
+
+                                    @if (previewLoading) {
+                                    <div class="p-6 text-center text-gray-500">
+                                        Calculating order summary...
+                                    </div>
+                                    } @else {
+
+                                    @if (preview) {
                                     <div class="rounded-xl shadow-inner bg-gray-50 p-5">
-                                        <h3 class="text-2xl font-bold text-gray-700 pb-1 border-b border-gray-200">Order
-                                            Summary</h3>
+
+                                        <h3 class="text-2xl font-bold text-gray-700 pb-1 border-b border-gray-200">
+                                            Order Summary
+                                        </h3>
 
                                         <p class="flex justify-between pt-1">
-                                            <span>Product Price </span>
-                                            <span class="font-bold">{{ itemPrice | currency : 'INR'}}</span>
+                                            <span>Product Price</span>
+                                            <span class="font-bold">
+                                                {{ preview.itemPrice | currency : 'INR' }}
+                                            </span>
                                         </p>
 
                                         <p class="flex justify-between pt-1">
                                             <span>Tax Price</span>
                                             <span class="font-bold">
-                                                <span class="font-bold">
-                                                    {{ taxPrice && taxPrice > 0 ? (taxPrice | currency
-                                                    :'INR') : 'Included in price' }}
-                                                </span>
-                                            </span>
-                                        </p>
-
-
-                                        <p class="flex justify-between">
-                                            <span>Shipping Charge </span>
-                                            <span class="font-bold">
-                                                {{ shippingPrice && shippingPrice > 0 ? (shippingPrice | currency
-                                                :'INR') : 'Free shipping' }}
+                                                {{ preview.taxPrice > 0
+                                                ? (preview.taxPrice | currency : 'INR')
+                                                : 'Included in price' }}
                                             </span>
                                         </p>
 
                                         <p class="flex justify-between">
-                                            <span>Delivery Charge </span>
+                                            <span>Shipping Charge</span>
                                             <span class="font-bold">
-                                                {{ deliveryPrice && deliveryPrice > 0 ? (deliveryPrice | currency
-                                                :'INR') : 'Free delivery' }}
+                                                {{ preview.shippingPrice > 0
+                                                ? (preview.shippingPrice | currency : 'INR')
+                                                : 'Free shipping' }}
+                                            </span>
+                                        </p>
+
+                                        <p class="flex justify-between">
+                                            <span>Delivery Charge</span>
+                                            <span class="font-bold">
+                                                {{ preview.deliveryPrice > 0
+                                                ? (preview.deliveryPrice | currency : 'INR')
+                                                : 'Free delivery' }}
                                             </span>
                                         </p>
 
                                         <div class="mt-6 pb-2 pt-3">
                                             <h3 class="text-xl font-bold text-slate-500 pb-3 text-center md:text-left">
                                                 Amount Payable :
-                                                <span class="text-black text-2xl">{{ totalAmount | currency
-                                                    :'INR'}}</span>
+                                                <span class="text-black text-2xl">
+                                                    {{ preview.totalPrice | currency : 'INR' }}
+                                                </span>
                                             </h3>
                                         </div>
+
                                     </div>
+                                    }
+
+                                    }
 
                                     <div class="flex pt-6 justify-end">
                                         <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" variant="text"
-                                            (onClick)="activateCallback(2)" />
+                                            (onClick)="activateCallback(2)">
+                                        </p-button>
                                     </div>
+
                                 </div>
+
                             </ng-template>
                         </p-step-panel>
 

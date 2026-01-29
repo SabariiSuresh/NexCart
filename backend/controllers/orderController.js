@@ -5,35 +5,78 @@ const Product = require('../models/product.model');
 const calcTotals = (items) => {
 
     let itemPrice = 0;
-    let taxPrice = 0;
     let shippingPrice = 0;
     let deliveryPrice = 0;
+    let taxPrice = 0;
     let isDiscountApplied = false;
 
     items.forEach(i => {
         const oldPrice = i.oldPrice || i.price;
-        if (oldPrice > i.price) {
-            isDiscountApplied = true;
-        }
+        if (oldPrice > i.price) isDiscountApplied = true;
 
         itemPrice += i.price * i.qty;
-
-        shippingPrice += i.price * 0.02 * i.qty;
     });
 
-    taxPrice = Number((itemPrice * 0.18).toFixed(2));
-
-    if (itemPrice > 2000) {
+    if (itemPrice <= 500) {
+        shippingPrice = 20;
+        deliveryPrice = 0;
+    } else if (itemPrice <= 1000) {
         shippingPrice = 50;
         deliveryPrice = 20;
+    } else if (itemPrice <= 2000) {
+        shippingPrice = 60;
+        deliveryPrice = 35;
     } else {
-        shippingPrice = 0;
-        deliveryPrice = 0;
+        shippingPrice = 100;
+        deliveryPrice = 50;
     }
 
-    const totalPrice = Number((itemPrice + taxPrice + shippingPrice + deliveryPrice).toFixed(2));
+    if (isDiscountApplied) {
+        taxPrice = 0
+    } else {
+        taxPrice = Number((itemPrice * 0.18).toFixed(2));
+    }
 
-    return { itemPrice, taxPrice, shippingPrice, deliveryPrice, totalPrice, isDiscountApplied };
+    const totalPrice = Number((itemPrice + shippingPrice + deliveryPrice + taxPrice).toFixed(2));
+
+    return { itemPrice, taxPrice, shippingPrice, deliveryPrice, totalPrice, isDiscountApplied, isFreeDelivery: deliveryPrice === 0 };
+};
+
+exports.orderPreview = async (req, res) => {
+    try {
+
+        const cartItems = req.body?.items;
+
+        if (!cartItems || !Array.isArray(cartItems)) {
+            return res.status(400).json({ message: 'Invalid cart items' });
+        }
+
+        const orderItems = [];
+
+        for (const ci of cartItems) {
+
+            const product = await Product.findById(ci.productId);
+
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+
+            orderItems.push({
+                price: product.price,
+                oldPrice: product.oldPrice,
+                qty: ci.qty
+            });
+
+        }
+
+        const totals = calcTotals(orderItems);
+
+        return res.status(200).json({ itemsCount: orderItems.reduce((a, b) => a + b.qty, 0), ...totals });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Preview failed' });
+    }
 };
 
 
@@ -204,7 +247,7 @@ exports.cancellOrder = async (req, res) => {
 
         if (['Shipped', 'Delivered'].includes(order.status)) {
 
-            return res.status(400).json({ success: false, message: 'Canot cancel shipped/delivered order'});
+            return res.status(400).json({ success: false, message: 'Canot cancel shipped/delivered order' });
 
         }
 

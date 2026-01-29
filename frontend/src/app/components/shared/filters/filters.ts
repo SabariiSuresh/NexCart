@@ -13,7 +13,7 @@ export class Filters {
   @Output() filtersChanged = new EventEmitter<void>();
   @Output() statusChanged = new EventEmitter<string>()
 
-  orderStatuses: string[] = ['All', 'On the way', 'Delivered', 'Cancelled'];
+  orderStatuses: string[] = ['All', 'Pending', 'Delivered', 'Cancelled'];
   selectedStatus: string = 'All';
   showDrawer: boolean = false;
 

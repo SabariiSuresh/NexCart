@@ -52,10 +52,11 @@
       </form>
 
       <div class="mt-4 pt-5">
-        <button pButton class="w-full p-button-outlined p-button-secondary flex justify-center items-center gap-2"
-          (click)="googleLogin()">
+        <button pButton
+          class="w-full p-button-outlined p-button-secondary flex justify-center items-center gap-2 opacity-90 disabled:opacity-50"
+          (click)="googleLogin()" [disabled]="googleDisabled">
           <img src="https://developers.google.com/identity/images/g-logo.png" width="18" />
-          Sign in with Google
+          Continue with Google
         </button>
       </div>
 

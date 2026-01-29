@@ -93,6 +93,36 @@ export class Feature {
       Ingredients: ['ingredients'],
       Diet: ['vegan', 'gluten-free', 'organic'],
       Others: []
+    },
+    refrigerator: {
+      Model: ['model'],
+      Type: ['defrost', 'door'],
+      Capacity: ['capacity'],
+      Energy: ['energy rating'],
+      Storage: ['shelves'],
+      Cooling: ['compressor'],
+      Features: ['inverter'],
+      Others: []
+    },
+
+    ac: {
+      Model: ['model'],
+      Capacity: ['tonnage'],
+      Energy: ['energy rating'],
+      Cooling: ['cooling', 'compressor'],
+      Mode: ['mode'],
+      Connectivity: ['wifi'],
+      Others: []
+    },
+
+    washingmachine: {
+      Model: ['model'],
+      Type: ['loading type'],
+      Capacity: ['load'],
+      Energy: ['energy rating'],
+      Wash: ['wash programs', 'spin speed'],
+      Features: ['inverter', 'heater'],
+      Others: []
     }
 
   };
@@ -261,7 +291,7 @@ export class Feature {
       'IGI certified': ['Yes', 'No']
     },
 
-    watchs: {
+    watches: {
       'case material': ['Steel', 'Titanium'],
       'strap material': ['Leather', 'Metal', 'Silicone'],
       'dial color': ['Black', 'Blue', 'White'],
@@ -283,7 +313,38 @@ export class Feature {
       vegan: ['Yes', 'No'],
       'gluten-free': ['Yes', 'No'],
       organic: ['Yes', 'No']
-    }
+    },
+
+    refrigerator: {
+      defrost: ['Direct Cool', 'Frost Free'],
+      model: [],
+      door: ['Single Door', 'Double Door', 'Side by Side'],
+      'energy rating': ['2 Star', '3 Star', '4 Star', '5 Star'],
+      shelves: ['Glass', 'Wire'],
+      capacity: ['190 L', '260 L', '350 L', '500 L'],
+      inverter: ['Yes', 'No']
+    },
+
+    ac: {
+      tonnage: ['1 Ton', '1.5 Ton', '2 Ton'],
+      model: [],
+      compressor: ['Inverter', 'Non-Inverter'],
+      'energy rating': ['2 Star', '3 Star', '4 Star', '5 Star'],
+      cooling: ['Fast', 'Turbo'],
+      mode: ['Cool', 'Dry', 'Fan', 'Auto'],
+      wifi: ['Yes', 'No']
+    },
+
+    washingmachine: {
+      'loading type': ['Front Load', 'Top Load', 'Semi Automatic'],
+      model: [],
+      load: ['6 kg', '7 kg', '8 kg', '9 kg'],
+      'energy rating': ['2 Star', '3 Star', '4 Star', '5 Star'],
+      'wash programs': ['Quick Wash', 'Cotton', 'Delicate', 'Heavy'],
+      'spin speed': ['800 RPM', '1000 RPM', '1200 RPM'],
+      inverter: ['Yes', 'No'],
+      heater: ['Yes', 'No']
+    },
 
   };
 
@@ -345,7 +406,6 @@ export class Feature {
 
     return Object.entries(grouped).map(([name, features]) => ({ name, features }));
   }
-
 
   getFeatureOptionsMap() {
     return this.categoryFeaturesList;

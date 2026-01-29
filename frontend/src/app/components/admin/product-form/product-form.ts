@@ -16,6 +16,7 @@ export class ProductForm implements OnInit, OnChanges {
 
   @Input() product: any = null;
   @Output() formSaved = new EventEmitter<boolean>();
+  @Output() formError = new EventEmitter<boolean>();
 
   productForm!: FormGroup;
   productTrees: TreeNode[] = [];
@@ -25,6 +26,7 @@ export class ProductForm implements OnInit, OnChanges {
 
   multiSelectKeys = ['ram', 'internal', 'charging type'];
 
+  isSubmitting = false;
 
   constructor(
     private form: FormBuilder,
@@ -164,7 +166,11 @@ export class ProductForm implements OnInit, OnChanges {
 
         featuresGroup.addControl(featureKey, array);
 
-      } else if (options.length > 0) {
+      } else if (options.length === 0) {
+
+        featuresGroup.addControl(featureKey, this.form.control(value ?? ''));
+
+      } else {
 
         featuresGroup.addControl(featureKey, this.form.control(value ?? ''));
 
@@ -230,6 +236,11 @@ export class ProductForm implements OnInit, OnChanges {
   submitForm() {
     if (this.productForm.invalid) return;
 
+    this.formSaved.emit(true);
+
+    this.isSubmitting = true;
+
+
     this.calculateDiscount();
     const formData = new FormData();
     const value = this.productForm.value;
@@ -272,25 +283,22 @@ export class ProductForm implements OnInit, OnChanges {
       else if (img.preview) formData.append('images', img.preview);
     });
 
-    if (this.product) {
-      this.productService.updateProduct(this.product._id, formData).subscribe({
-        next: () => {
-          this.notify.success('Product updated');
-          this.formSaved.emit(true);
-          this.productForm.reset();
-        },
-        error: () => this.notify.error('Failed to update product')
-      });
-    } else {
-      this.productService.createProduct(formData).subscribe({
-        next: () => {
-          this.notify.success('Product added');
-          this.formSaved.emit(true);
-          this.productForm.reset();
-        },
-        error: err => this.notify.error('Failed to add product' + err)
-      });
-    }
+
+    const requiest$ = this.product ? this.productService.updateProduct(this.product._id, formData) : this.productService.createProduct(formData);
+
+    requiest$.subscribe({
+      next: () => {
+        this.notify.success(this.product ? 'Product updated' : 'Product added');
+        this.formError.emit(true);
+        this.productForm.reset();
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        this.notify.error('Failed to save product' + err);
+        this.isSubmitting = false;
+        this.formError.emit(true);
+      }
+    });
   }
 
 
@@ -324,6 +332,15 @@ export class ProductForm implements OnInit, OnChanges {
     if (this.featuresGroup.contains(key)) {
       this.featuresGroup.removeControl(key);
     }
+  }
+
+  isTextFeature(key: string): boolean {
+    const categoryType = this.categoryIdMap[this.productForm.value.category?.key];
+
+    if (!categoryType) return false;
+
+    const options = this.featureService.getFeatureOptionsMap()[categoryType]?.[key];
+    return Array.isArray(options) && options.length === 0;
   }
 
 

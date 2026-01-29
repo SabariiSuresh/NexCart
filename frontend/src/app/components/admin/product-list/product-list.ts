@@ -108,16 +108,16 @@ export class ProductList implements OnInit {
 
 
 
-  filterByCategory() {
+  filterByCategory(category: any) {
     if (!this.selectedCategory) {
       this.loadProducts();
       return;
     }
 
     const categoryId =
-      this.selectedCategory?.key ||
-      this.selectedCategory?.data ||
-      this.selectedCategory;
+      category?.key ||
+      category?.data ||
+      category;
 
     this.productService.getProductByCategory(categoryId).subscribe({
       next: (res: any) => {
@@ -128,8 +128,6 @@ export class ProductList implements OnInit {
         } else {
           this.notify.success(`${this.filteredProducts.length} products found`);
         }
-
-        console.log(this.selectedCategory,this.selectedProduct)
       },
       error: err => {
         if (err.status == 404) {
@@ -199,8 +197,14 @@ export class ProductList implements OnInit {
     if (saved) {
       this.loadProducts();
       this.displayForm = false;
+      this.selectedProduct = null;
     }
 
   }
+
+  onFormError() {
+    this.displayForm = true;
+  }
+
 
 }

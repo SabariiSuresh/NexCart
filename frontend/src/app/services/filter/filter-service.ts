@@ -20,7 +20,7 @@ export class FilterService {
   categoryMap: Record<string, string[]> = {
     fashion: ['mens clothing', 'mens footware', 'womens clothing', 'womens footware', 'accessories', 'watch', 'jewelry'],
     electronics: ['mobiles', 'laptops', 'headphones', 'cameras', 'speakers'],
-    home: ['furniture', 'decor', 'appliances'],
+    appliances: ['refrigerator', 'ac', 'washingmachine' , 'tv'],
     beauty: ['skincare', 'makeup', 'haircare'],
     sports: ['fitness', 'outdoor', 'athletics'],
   };

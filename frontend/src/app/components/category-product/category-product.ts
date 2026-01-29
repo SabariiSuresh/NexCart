@@ -115,15 +115,21 @@ export class CategoryProduct implements OnInit {
     };
 
     this.categoryService.getFilteredProducts(params).subscribe({
-      next: (res) => {
-        this.filteredProducts = res.products;
 
-        if (!this.filteredProducts.length) {
-          this.notify.warning('No products match the selected filters.');
+      next: (res) => {
+
+        const filteredProductsResult = res.products || [];
+
+        if (filteredProductsResult.length === 0) {
+          this.notify.warning('No products match the selected filters');
+          return;
         }
+
+        this.filteredProducts = filteredProductsResult;
 
       },
       error: err => console.error(err)
+
     });
   }
 

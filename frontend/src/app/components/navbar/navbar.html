@@ -9,7 +9,7 @@
     </div>
 
 
-    <div class="flex flex-1 mx-2 md:mx-6 max-w-2xl pr-3">
+    <div *ngIf="showSearchBar" class="flex flex-1 mx-2 md:mx-6 max-w-2xl pr-3">
         <p-inputGroup class="w-full">
             <p-autoComplete [(ngModel)]="searchKeyword" [suggestions]="filteredSuggestions"
                 (completeMethod)="searchSuggestions($event)" (onSelect)="selectSuggestion($event)"

@@ -19,6 +19,7 @@ export class Auth implements OnInit {
   loginForm!: FormGroup;
   registerForm!: FormGroup;
 
+  googleDisabled = false;
 
   constructor(private authService: AuthService, private messageService: MessageService, private form: FormBuilder, private router: Router, private notify: NotificationService) { }
 
@@ -26,8 +27,8 @@ export class Auth implements OnInit {
 
     this.loginForm = this.form.group({
 
-      email: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\\.[a-zA-Z]{2,}')]),
-      password: new FormControl('', [Validators.required])
+      email: new FormControl('sabari@gmail.com', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\\.[a-zA-Z]{2,}')]),
+      password: new FormControl('12345', [Validators.required])
 
     });
 
@@ -54,44 +55,40 @@ export class Auth implements OnInit {
 
   onLogin() {
 
-    if (this.loginForm.valid) {
+    if (this.loginForm.invalid) return;
 
-      this.authService.login(this.loginForm.value).subscribe({
+    this.showDialog = false;
 
-        next: (res: any) => {
-          this.authService.setToken(res.token);
+    this.authService.login(this.loginForm.value).subscribe({
 
-          this.notify.success('Login successfull');
-          this.showDialog = false;
-          const role = this.authService.getRole();
+      next: (res: any) => {
+        this.authService.setToken(res.token);
 
-          if (role === 'admin') {
-            this.router.navigate(['/admin/dashboard']);
-          } else {
+        this.notify.success('Login successfull');
+        this.showDialog = false;
+        const role = this.authService.getRole();
 
-            const lastRoute = sessionStorage.getItem('redirectAfterLogin');
+        if (role === 'admin') {
+          this.router.navigate(['/admin/dashboard']);
+        } else {
 
-            if (lastRoute) {
-
-              this.router.navigateByUrl(lastRoute);
-              sessionStorage.removeItem('redirectAfterLogin');
-            }
-            else {
-
-              this.router.navigate(['/home']);
-            }
-
-          }
-
-        }, error: (err) => {
-
-          this.notify.error(err.error?.message || 'Login Failed');
-          this.loginForm.reset();
-          console.error('Login error', err);
-
+          const lastRoute = sessionStorage.getItem('redirectAfterLogin');
+          this.router.navigateByUrl(lastRoute || '/home');
+          sessionStorage.removeItem('redirectAfterLogin');
         }
-      })
-    }
+
+      }, error: (err) => {
+
+        setTimeout(() => {
+          this.showDialog = true;
+        });
+
+        this.notify.error(err.error?.message || 'Login Failed');
+        this.loginForm.reset();
+        console.error('Login error', err);
+
+      }
+    })
   }
 
 
@@ -118,7 +115,12 @@ export class Auth implements OnInit {
 
   googleLogin() {
 
-    // Pending
+    if (this.googleDisabled) return;
+
+    this.googleDisabled = true;
+    this.notify.info('Google sign-in is under development. Stay tuned!');
+
+    setTimeout(() => this.googleDisabled = false, 2000);
 
   }
 

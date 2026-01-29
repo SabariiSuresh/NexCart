@@ -52,7 +52,6 @@ export class OrderConfirmationAndTrack implements OnInit {
   }
 
 
-
   fetchOrder() {
     this.orderService.getOrderById(this.orderId).subscribe({
       next: res => {
@@ -77,9 +76,6 @@ export class OrderConfirmationAndTrack implements OnInit {
   }
 
 
-
-
-
   getStepMessage(status: string): string {
     switch (status) {
       case 'Pending': return 'We are processing your order.';
@@ -89,7 +85,6 @@ export class OrderConfirmationAndTrack implements OnInit {
       default: return '';
     }
   }
-
 
 
   cancelOrder(event: Event) {
@@ -127,5 +122,7 @@ export class OrderConfirmationAndTrack implements OnInit {
   goToOrders() {
     this.router.navigate(['/my-orders']);
   }
+
+
 
 }
