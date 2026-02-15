@@ -31,6 +31,9 @@ import { Wildcard } from './components/wildcard/wildcard';
 import { Section } from './components/section/section';
 import { SocialLoginModule, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import { LottieComponent } from 'ngx-lottie';
+import { provideLottieOptions } from 'ngx-lottie';
+import player from 'lottie-web';
 
 @NgModule({
   declarations: [
@@ -48,6 +51,7 @@ import { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
   ],
   imports: [
     BrowserModule,
+    LottieComponent,
     AppRoutingModule,
     MaterialsModule,
     HttpClientModule,
@@ -62,7 +66,11 @@ import { SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
     SharedModule
   ],
   providers: [
-    
+
+    provideLottieOptions({
+      player: () => player
+    }),
+
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DialogService,
     provideBrowserGlobalErrorListeners(),

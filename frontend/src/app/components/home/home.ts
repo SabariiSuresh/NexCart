@@ -24,6 +24,10 @@ export class Home implements OnInit {
   products: any[] = [];
   productSections: any[] = [];
 
+  categoryLoading = true;
+  sectionLoading = true;
+  skeletonItems = Array(8);
+
   environment = environment;
 
   constructor(private productService: ProductService, private categoryService: CategoryService, private authService: AuthService, private router: Router) { }
@@ -34,16 +38,26 @@ export class Home implements OnInit {
   }
 
   loadCategories() {
+    this.categoryLoading = true;
+console.log('categories before API', this.categories);
+
     this.categoryService.getPublicCategories().subscribe({
       next: (res) => {
         this.categories = res.categories || res;
+        this.categoryLoading = false;
+        
       },
-      error: (err) => { console.error('Failed to fetch categories', err); }
+      error: (err) => {
+        console.error('Failed to fetch categories', err);
+        this.categoryLoading = false;
+      }
     });
   }
 
 
   loadSections() {
+
+    this.sectionLoading = true;
 
     this.productService.getSections(8).subscribe({
       next: (res: any) => {
@@ -74,6 +88,7 @@ export class Home implements OnInit {
         }
 
         this.productSections = blocks;
+        this.sectionLoading = false;
       },
       error: (err) => console.error(err)
     });
@@ -90,7 +105,11 @@ export class Home implements OnInit {
             });
           }
         },
-        error: (err) => console.error('Recommended fetch failed', err)
+        error: (err) => {
+          console.error('Recommended fetch failed', err);
+          this.sectionLoading = false;
+        }
+
       });
     }
   }

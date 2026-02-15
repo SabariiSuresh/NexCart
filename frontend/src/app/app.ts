@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { LoaderService } from './services/loader/loader-service';
+import { AnimationOptions } from 'ngx-lottie';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,12 @@ export class App implements OnInit{
   protected readonly title = signal('frontend');
 
   loading = false;
+
+  lottieOptions : AnimationOptions = {
+    path : '/assets/Loading.json',
+    autoplay : true,
+    loop : true
+  }
 
   constructor(private  loderService : LoaderService , private change : ChangeDetectorRef){
     this.loderService.isLoading.subscribe((res)=>{

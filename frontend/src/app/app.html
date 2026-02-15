@@ -1,14 +1,8 @@
-<div *ngIf="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center
-         bg-black/30 backdrop-blur-md">
+<div *ngIf="loading"
+     class="fixed inset-0 z-50 flex flex-col items-center justify-center
+            bg-black/40 backdrop-blur-md">
 
-  <div class="relative">
-    <p-progressSpinner strokeWidth="7" animationDuration=".9s" styleClass="w-20 h-20">
-    </p-progressSpinner>
-  </div>
-
-  <p class="mt-6 text-white text-lg tracking-wide animate-pulse">
-    Loading, please wait…
-  </p>
+<ng-lottie [options]="lottieOptions"></ng-lottie>
 </div>
 
 

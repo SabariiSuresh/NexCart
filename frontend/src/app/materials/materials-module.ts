@@ -38,6 +38,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { CheckboxModule } from 'primeng/checkbox';
+import { SkeletonModule } from 'primeng/skeleton';
 
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,6 +50,7 @@ import { MatButtonModule } from '@angular/material/button';
     FileUploadModule,
     CheckboxModule,
     SliderModule,
+    SkeletonModule,
     OverlayBadgeModule,
     DrawerModule,
     GalleriaModule,
@@ -95,6 +97,7 @@ import { MatButtonModule } from '@angular/material/button';
     GalleriaModule,
     FileUploadModule,
     MatStepperModule,
+    SkeletonModule,
     FormsModule,
     ReactiveFormsModule,
     MenuModule,
