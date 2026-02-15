@@ -26,7 +26,7 @@ export class Home implements OnInit {
 
   categoryLoading = true;
   sectionLoading = true;
-  skeletonItems = Array(8);
+  skeletonItems = Array(9);
 
   environment = environment;
 
