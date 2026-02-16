@@ -27,8 +27,8 @@ export class Auth implements OnInit {
 
     this.loginForm = this.form.group({
 
-      email: new FormControl('sabari@gmail.com', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\\.[a-zA-Z]{2,}')]),
-      password: new FormControl('12345', [Validators.required])
+      email: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\\.[a-zA-Z]{2,}')]),
+      password: new FormControl('', [Validators.required])
 
     });
 
