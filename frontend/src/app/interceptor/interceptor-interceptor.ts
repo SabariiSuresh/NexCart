@@ -17,6 +17,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private activeRequests = 0;
   private logoutTriggered: boolean = false;
+  private loaderTimeOut: any;
+
   private readonly excludedUrls = ['/quick-search'];
 
   constructor(
@@ -31,16 +33,20 @@ export class AuthInterceptor implements HttpInterceptor {
 
     const token = this.auth.getToken?.();
 
-    if (shouldShowLoader) {
-      if (this.activeRequests === 0) {
-        this.loader.show();
-      }
-      this.activeRequests++;
-    }
-
     const authReq = token
       ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
       : req;
+
+    if (shouldShowLoader) {
+
+      this.activeRequests++;
+
+      if (this.activeRequests === 1) {
+        this.loaderTimeOut = setTimeout(() => {
+          this.loader.show();
+        }, 300)
+      };
+    };
 
     return next.handle(authReq).pipe(
 
@@ -59,11 +65,13 @@ export class AuthInterceptor implements HttpInterceptor {
       }),
 
       finalize(() => {
+
         if (shouldShowLoader) {
           this.activeRequests = Math.max(0, this.activeRequests - 1);
 
           if (this.activeRequests === 0) {
-            setTimeout(() => this.loader.hide(), 2000)
+            clearTimeout(this.loaderTimeOut);
+            this.loader.hide();
           }
         }
       })
