@@ -8,27 +8,22 @@ import { AnimationOptions } from 'ngx-lottie';
   standalone: false,
   styleUrl: './app.css'
 })
-export class App implements OnInit{
+export class App {
   protected readonly title = signal('frontend');
 
   loading = false;
 
-  lottieOptions : AnimationOptions = {
-    path : '/assets/Loading.json',
-    autoplay : true,
-    loop : true
+  lottieOptions: AnimationOptions = {
+    path: '/assets/Loading.json',
+    autoplay: true,
+    loop: true
   }
 
-  constructor(private  loderService : LoaderService , private change : ChangeDetectorRef){
-    this.loderService.isLoading.subscribe((res)=>{
+  constructor(private loaderService: LoaderService, private change: ChangeDetectorRef) {
+    this.loaderService.isLoading.subscribe((res) => {
       this.loading = res;
       this.change.markForCheck();
     });
   }
-
-  ngOnInit() {
-  this.loderService.show();
-  setTimeout(() => this.loderService.hide(), 4000);
-}
 
 }

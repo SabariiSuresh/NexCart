@@ -63,7 +63,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.activeRequests = Math.max(0, this.activeRequests - 1);
 
           if (this.activeRequests === 0) {
-            setTimeout(() => this.loader.hide(), 2000);
+            setTimeout(() => this.loader.hide(), 2000)
           }
         }
       })
