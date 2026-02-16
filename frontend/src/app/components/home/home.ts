@@ -39,8 +39,6 @@ export class Home implements OnInit {
 
   loadCategories() {
     this.categoryLoading = true;
-console.log('categories before API', this.categories);
-
     this.categoryService.getPublicCategories().subscribe({
       next: (res) => {
         this.categories = res.categories || res;

@@ -53,7 +53,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.logoutTriggered = true;
           this.notify.error("Your session has expired!");
           this.auth.logOut();
-          
+
         }
         return throwError(() => error);
       }),
@@ -63,7 +63,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.activeRequests = Math.max(0, this.activeRequests - 1);
 
           if (this.activeRequests === 0) {
-            this.loader.hide();
+            setTimeout(() => this.loader.hide(), 2000);
           }
         }
       })
